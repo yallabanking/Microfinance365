@@ -302,40 +302,6 @@
   .docs-panel li{padding:4px 0 4px 18px;position:relative;}
   .docs-panel li:before{content:'✓';position:absolute;right:0;color:var(--ember);font-weight:800;}
 
-  /* Installment calculator */
-  .calc-box{
-    background:var(--paper);border:1px solid var(--line);border-radius:20px;
-    padding:26px 24px;max-width:560px;box-shadow:var(--shadow);
-  }
-  .calc-row{margin-bottom:20px;}
-  .calc-row:last-of-type{margin-bottom:0;}
-  .calc-row label{display:block;font-size:0.88rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
-  .calc-row label b{color:var(--flame);font-family:'Cairo';font-size:1rem;}
-  .calc-row select{
-    width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;
-    font-family:'Tajawal';font-size:0.92rem;background:#fff;color:var(--ink);
-  }
-  .calc-row input[type=range]{
-    width:100%;-webkit-appearance:none;height:6px;border-radius:999px;
-    background:linear-gradient(90deg,var(--flame),var(--amber));outline:none;
-  }
-  .calc-row input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
-    background:#fff;border:4px solid var(--flame);cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.25);
-  }
-  .calc-row input[type=range]::-moz-range-thumb{
-    width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--flame);cursor:pointer;
-  }
-  .calc-result{
-    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;
-    background:linear-gradient(120deg,#FFF0E2,#FFE3C4);border-radius:14px;padding:18px;
-    border:1px solid rgba(217,51,10,0.2);
-  }
-  .calc-result-item{text-align:center;}
-  .calc-result-item span{display:block;font-size:0.72rem;color:var(--ink-soft);margin-bottom:4px;}
-  .calc-result-item b{font-family:'Cairo';font-size:1.25rem;color:var(--flame);}
-  .calc-note{font-size:0.72rem;color:var(--ink-soft);margin-top:14px;text-align:center;}
-
   /* Order tracking */
   .track-box .inputrow{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;display:flex;}
   .track-box .inputrow input{border:none;outline:none;padding:13px 14px;flex:1;font-size:0.95rem;background:transparent;color:var(--ink);}
@@ -401,20 +367,6 @@
   .flow-step h4{font-size:0.96rem;margin-bottom:6px;}
   .flow-step p{font-size:0.83rem;color:var(--ink-soft);}
 
-  /* FEATURES */
-  .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
-  @media(max-width:700px){.feat-grid{grid-template-columns:1fr;}}
-  .feat{
-    display:flex;gap:13px;background:var(--paper);border:1px solid var(--line);
-    border-radius:15px;padding:16px 18px;
-  }
-  .feat .ico{
-    width:40px;height:40px;flex:none;border-radius:11px;background:var(--cream);
-    display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--flame);
-  }
-  .feat h4{font-size:0.92rem;margin-bottom:4px;}
-  .feat p{font-size:0.82rem;color:var(--ink-soft);}
-
   /* DARK SECTION */
   .dark{background:var(--ink);color:#FFE7C2;}
   .dark .sec-sub{color:#D9B9A6;}
@@ -442,7 +394,6 @@
   .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
   .reveal.in{opacity:1;transform:translateY(0);}
   .cards-grid .pcard.reveal.in{transition-delay:calc(var(--stagger, 0) * 70ms);}
-  .feat-grid .feat.reveal.in{transition-delay:calc(var(--stagger, 0) * 60ms);}
   .flow .flow-step.reveal.in{transition-delay:calc(var(--stagger, 0) * 90ms);}
 
   .app-toast{
@@ -597,9 +548,7 @@
     </div>
     <div class="navlinks">
       <a href="#products">المنتجات</a>
-      <a href="#calculator">حاسبة القسط</a>
       <a href="#flow">خطوات التقديم</a>
-      <a href="#features">مزايا النظام</a>
       <a href="#track">تتبع طلبك</a>
       <a href="#faq">الأسئلة الشائعة</a>
     </div>
@@ -906,52 +855,6 @@
   </div>
 </section>
 
-<!-- INSTALLMENT CALCULATOR -->
-<section id="calculator">
-  <div class="wrap">
-    <div class="kicker reveal">حاسبة تفاعلية</div>
-    <h2 class="sec-title reveal">احسب قسطك الشهري قبل ما تقدّم</h2>
-    <p class="sec-sub reveal">اختار المنتج والمبلغ والمدة، وشوف القسط التقريبي فورًا حسب سعر العائد الرسمي للمنتج.</p>
-
-    <div class="calc-box reveal">
-      <div class="calc-row">
-        <label>المنتج</label>
-        <div class="inputrow">
-          <select id="calcProduct">
-            <option value="informal-42" data-rate="42" data-min="5000" data-max="200000" data-maxmonths="48">متناهي الصغر — غير رسمي (42%)</option>
-            <option value="informal-debt-42" data-rate="42" data-min="5000" data-max="100000" data-maxmonths="48">شراء مديونية — غير رسمي (42%)</option>
-            <option value="formal-38" data-rate="38" data-min="50000" data-max="500000" data-maxmonths="60">متناهي الصغر — رسمي (38%)</option>
-            <option value="formal-debt-36" data-rate="36" data-min="50000" data-max="500000" data-maxmonths="60">شراء مديونية — رسمي (36%)</option>
-            <option value="transport-42" data-rate="42" data-min="5000" data-max="400000" data-maxmonths="36">وسائل النقل ومعدات البناء (42%)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="calc-row">
-        <label>مبلغ التمويل: <b id="calcAmountLabel">50,000</b> ج.م</label>
-        <input type="range" id="calcAmountSlider" min="5000" max="200000" step="1000" value="50000">
-      </div>
-
-      <div class="calc-row">
-        <label>مدة السداد: <b id="calcMonthsLabel">24</b> شهر</label>
-        <input type="range" id="calcMonthsSlider" min="4" max="48" step="1" value="24">
-      </div>
-
-      <div class="calc-result">
-        <div class="calc-result-item">
-          <span>القسط الشهري التقريبي</span>
-          <b id="calcMonthlyResult">0 ج.م</b>
-        </div>
-        <div class="calc-result-item">
-          <span>إجمالي المبلغ المسدد</span>
-          <b id="calcTotalResult">0 ج.م</b>
-        </div>
-      </div>
-      <p class="calc-note">* حساب تقريبي بنظام العائد الثابت السنوي، للاسترشاد فقط — القسط النهائي يتحدد بعد المراجعة الائتمانية.</p>
-    </div>
-  </div>
-</section>
-
 <!-- FLOW -->
 <section id="flow">
   <div class="wrap">
@@ -963,25 +866,6 @@
       <div class="flow-step reveal"><div class="flow-num">2</div><h4>تفعيل الموقع الجغرافي</h4><p>السماح للمتصفح بالوصول لموقعك الفعلي (GPS) لتحديد أقرب فرع والمنتجات المتاحة بمنطقتك.</p></div>
       <div class="flow-step reveal"><div class="flow-num">3</div><h4>اختيار المنتج المناسب</h4><p>استعراض شرائح التمويل والمدد وأسعار العائد لكل منتج، واختيار الأنسب لنشاطك.</p></div>
       <div class="flow-step reveal"><div class="flow-num">4</div><h4>استيفاء المستندات والصرف</h4><p>رفع المستندات المطلوبة حسب المنتج، ومراجعة مستشار التمويل، ثم التوقيع والصرف بالفرع.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section id="features">
-  <div class="wrap">
-    <div class="kicker reveal">مقترحاتنا كخبراء تسويق وبرمجة</div>
-    <h2 class="sec-title reveal">مزايا نقترح إضافتها للنظام تزود التحويل والثقة</h2>
-    <p class="sec-sub reveal">مزايا بنشوفها ضرورية عشان النظام يحقق أعلى معدل تحويل وأقل معدل تسرب من رحلة التسجيل.</p>
-    <div class="feat-grid">
-      <div class="feat reveal"><div class="ico">📍</div><div><h4>ترشيح المنتج تلقائيًا حسب الموقع</h4><p>استبعاد منتجات التوك توك والتروسيكل والفان تلقائيًا لعملاء القاهرة الكبرى والإسكندرية، بدل ما العميل يكتشف الرفض بعد التقديم.</p></div></div>
-      <div class="feat reveal"><div class="ico">🧮</div><div><h4>حاسبة قسط تفاعلية لكل شريحة</h4><p>سلايدر لمبلغ التمويل ضمن حدود الشريحة يعرض القسط الشهري بسعر العائد الصحيح للمنتج المختار فورًا.</p></div></div>
-      <div class="feat reveal"><div class="ico">🗂️</div><div><h4>قائمة مستندات ديناميكية</h4><p>عرض المستندات المطلوبة تحديدًا حسب المنتج المختار (رسمي/غير رسمي/وسائل نقل) بدل قائمة عامة تربك العميل.</p></div></div>
-      <div class="feat reveal"><div class="ico">💬</div><div><h4>تكامل واتساب بزنس</h4><p>متابعة حالة الطلب وتذكير بالمستندات الناقصة عبر واتساب، القناة الأكثر استخدامًا لعملاء الشريحة دي.</p></div></div>
-      <div class="feat reveal"><div class="ico">📸</div><div><h4>رفع مستندات بالكاميرا مباشرة</h4><p>تصوير البطاقة والسجل التجاري وإيصال المرافق مباشرة من الموبايل مع قص وتحسين تلقائي للصورة.</p></div></div>
-      <div class="feat reveal"><div class="ico">🏅</div><div><h4>مؤشرات ثقة وشفافية بالأسعار</h4><p>عرض سعر العائد ومصاريف الإصدار وعمولة السداد المعجل بوضوح تام قبل أي التزام من العميل.</p></div></div>
-      <div class="feat reveal"><div class="ico">📊</div><div><h4>لوحة تتبع حالة الطلب</h4><p>شريط تقدم يوضح مرحلة الطلب الحالية (مراجعة، تقرير حالة، موافقة، صرف) بدل رسائل التحديث المتفرقة.</p></div></div>
-      <div class="feat reveal"><div class="ico">🔁</div><div><h4>مسار خاص لعملاء التجديد</h4><p>تدفق مختصر لعملاء التجديد أو شراء المديونية، يطلب فقط البيانات الإضافية اللازمة لحالتهم بدل تكرار كل الخطوات.</p></div></div>
     </div>
   </div>
 </section>
@@ -1059,7 +943,7 @@
   <button class="btn-primary" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">ابدأ طلبك الآن — تقديم وصرف خلال 24 ساعة</button>
 </div>
 
-<a href="https://wa.me/16990" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="تواصل عبر واتساب">
+<a href="https://wa.me/+201030702005" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="تواصل عبر واتساب">
   <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.7 4.611 1.909 6.478L4 29l7.72-1.858A11.93 11.93 0 0016 27c6.627 0 12-5.373 12-12S22.628 3 16.001 3zm0 21.818c-2.02 0-3.91-.59-5.5-1.606l-.395-.243-4.58 1.102 1.128-4.46-.257-.412A9.77 9.77 0 016.182 15c0-5.417 4.402-9.818 9.819-9.818 5.416 0 9.817 4.401 9.817 9.818 0 5.417-4.401 9.818-9.817 9.818zm5.377-7.34c-.294-.147-1.744-.86-2.014-.958-.27-.098-.467-.147-.663.147-.196.294-.76.958-.932 1.155-.172.196-.343.221-.638.074-.294-.147-1.243-.458-2.367-1.461-.875-.78-1.466-1.744-1.638-2.038-.172-.294-.018-.453.13-.6.133-.132.294-.343.441-.515.147-.172.196-.294.294-.49.098-.196.049-.368-.025-.515-.074-.147-.663-1.598-.909-2.188-.24-.575-.483-.497-.663-.506-.172-.008-.368-.01-.564-.01-.196 0-.515.074-.785.368-.27.294-1.03 1.007-1.03 2.455 0 1.448 1.055 2.847 1.203 3.043.147.196 2.076 3.17 5.032 4.444.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.744-.713 1.99-1.402.245-.688.245-1.278.172-1.401-.074-.123-.27-.196-.564-.343z"/></svg>
 </a>
 
@@ -1096,7 +980,7 @@
   // إعداد Supabase — حط بياناتك هنا (من Settings > API في مشروعك)
   // ملاحظة: لازم القيمتين يفضلوا بين علامتي تنصيص ' ' وعلى سطر واحد بدون مسافات زيادة
   // ============================================================
-  window.SUPABASE_URL = 'https://aisfzvkpakxroaizogus.supabase.co/rest';
+  window.SUPABASE_URL = 'https://aisfzvkpakxroaizogus.supabase.co';
   window.SUPABASE_ANON_KEY = 'sb_publishable_hwc3keZo1mxrux-ymxguNg_K9YVE-Fu';
 
   window.supabaseClient = null;
@@ -1137,7 +1021,7 @@
 
   // Reveal on scroll (with stagger for grouped grid/list items)
   const revealEls = document.querySelectorAll('.reveal');
-  ['.cards-grid', '.feat-grid', '.flow'].forEach(sel=>{
+  ['.cards-grid', '.flow'].forEach(sel=>{
     document.querySelectorAll(sel).forEach(group=>{
       Array.from(group.children).forEach((child, i)=>{ child.style.setProperty('--stagger', i); });
     });
@@ -1762,54 +1646,6 @@
         trackBtn.textContent = 'بحث';
       }
     });
-  }
-
-  // حاسبة القسط التفاعلية
-  const calcProduct = document.getElementById('calcProduct');
-  const calcAmountSlider = document.getElementById('calcAmountSlider');
-  const calcMonthsSlider = document.getElementById('calcMonthsSlider');
-  const calcAmountLabel = document.getElementById('calcAmountLabel');
-  const calcMonthsLabel = document.getElementById('calcMonthsLabel');
-  const calcMonthlyResult = document.getElementById('calcMonthlyResult');
-  const calcTotalResult = document.getElementById('calcTotalResult');
-
-  function fmtEGP(n){ return Math.round(n).toLocaleString('en-US') + ' ج.م'; }
-
-  function updateCalcBounds(){
-    const opt = calcProduct.selectedOptions[0];
-    const min = Number(opt.dataset.min);
-    const max = Number(opt.dataset.max);
-    const maxMonths = Number(opt.dataset.maxmonths);
-    calcAmountSlider.min = min;
-    calcAmountSlider.max = max;
-    if(Number(calcAmountSlider.value) < min) calcAmountSlider.value = min;
-    if(Number(calcAmountSlider.value) > max) calcAmountSlider.value = max;
-    calcMonthsSlider.max = maxMonths;
-    if(Number(calcMonthsSlider.value) > maxMonths) calcMonthsSlider.value = maxMonths;
-  }
-
-  function runCalc(){
-    const opt = calcProduct.selectedOptions[0];
-    const rate = Number(opt.dataset.rate) / 100; // سعر عائد سنوي ثابت
-    const amount = Number(calcAmountSlider.value);
-    const months = Number(calcMonthsSlider.value);
-    const years = months / 12;
-    const totalInterest = amount * rate * years;
-    const total = amount + totalInterest;
-    const monthly = total / months;
-
-    calcAmountLabel.textContent = amount.toLocaleString('en-US');
-    calcMonthsLabel.textContent = months;
-    calcMonthlyResult.textContent = fmtEGP(monthly);
-    calcTotalResult.textContent = fmtEGP(total);
-  }
-
-  if(calcProduct){
-    calcProduct.addEventListener('change', ()=>{ updateCalcBounds(); runCalc(); });
-    calcAmountSlider.addEventListener('input', runCalc);
-    calcMonthsSlider.addEventListener('input', runCalc);
-    updateCalcBounds();
-    runCalc();
   }
 
   // Product filter
