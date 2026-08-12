@@ -92,6 +92,9 @@
     display:grid;grid-template-columns:1.1fr 0.9fr;gap:36px;align-items:center;
     position:relative;z-index:1;
   }
+  .hero-arch-divider{
+    position:absolute;bottom:-1px;left:0;width:100%;height:44px;display:block;z-index:1;
+  }
   @media(max-width:900px){.hero-inner{grid-template-columns:1fr;}}
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
@@ -102,6 +105,13 @@
   .hero h1{font-size:clamp(1.7rem,4.4vw,3rem);font-weight:900;line-height:1.3;margin-bottom:16px;}
   .hero h1 em{font-style:normal;color:#FFE7C2;}
   .hero p.lead{font-size:1rem;color:rgba(255,255,255,0.92);max-width:520px;margin-bottom:24px;font-weight:400;}
+  .hero-whatsapp-cta{
+    display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;
+    padding:11px 20px;border-radius:999px;font-weight:800;font-size:0.86rem;
+    box-shadow:0 10px 22px -8px rgba(0,0,0,0.35);margin-bottom:6px;transition:transform .2s ease;
+  }
+  .hero-whatsapp-cta:hover{transform:translateY(-2px);}
+  .hero-whatsapp-cta svg{width:18px;height:18px;}
   .trustrow{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;}
   .trustrow .t{font-size:0.78rem;color:rgba(255,255,255,0.85);}
   .trustrow .t b{font-family:'Cairo',sans-serif;font-size:1.1rem;display:block;color:#fff;}
@@ -329,14 +339,6 @@
   }
   .trust-item span{font-size:0.76rem;font-weight:700;color:var(--ink-soft);}
 
-  /* Location-based product restriction notice */
-  .pcard.loc-restricted{opacity:0.85;}
-  .loc-restricted-notice{
-    background:#FFF3CD;color:#7A5A00;border:1px solid rgba(122,90,0,0.25);
-    border-radius:10px;padding:8px 10px;font-size:0.72rem;font-weight:700;
-    margin-bottom:12px;line-height:1.6;
-  }
-
   /* Renewal quick path banner */
   .renewal-banner{
     display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
@@ -547,7 +549,7 @@
       </div>
     </div>
     <div class="navlinks">
-      <a href="#products">المنتجات</a>
+      <a href="#apply" onclick="event.preventDefault(); document.getElementById('apply').scrollIntoView({behavior:'smooth'});">المنتجات</a>
       <a href="#flow">خطوات التقديم</a>
       <a href="#track">تتبع طلبك</a>
       <a href="#faq">الأسئلة الشائعة</a>
@@ -740,10 +742,13 @@
     </div>
   </div>
   <div style="height:100px;"></div>
+  <svg class="hero-arch-divider" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,60 L0,30 Q50,0 100,30 Q150,60 200,30 Q250,0 300,30 Q350,60 400,30 Q450,0 500,30 Q550,60 600,30 Q650,0 700,30 Q750,60 800,30 Q850,0 900,30 Q950,60 1000,30 Q1050,0 1100,30 Q1150,60 1200,30 L1200,60 Z" fill="var(--cream)"/>
+  </svg>
 </section>
 
 <!-- PRODUCTS -->
-<section id="products">
+<section id="products" style="display:none;">
   <div class="wrap">
     <div class="kicker reveal">دليل المنتجات</div>
     <h2 class="sec-title reveal">6 منتجات تمويلية بمحددات معتمدة من قطاع التمويل متناهي الصغر</h2>
@@ -766,7 +771,7 @@
 
       <div class="pcard reveal" data-cat="informal">
         <span class="tag">القطاع غير الرسمي</span>
-        <span class="smart-badge best">⭐ الأكثر طلبًا</span>
+        <span class="smart-badge fast">⚡ الأسرع صرفًا</span>
         <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M8 40V20l16-13 16 13v20"/><path class="stroke" d="M19 40V26h10v14"/></svg></div>
         <h3 data-pname="تمويل متناهي الصغر — غير رسمي">تمويل متناهي الصغر — غير رسمي</h3>
         <p>لأصحاب الأنشطة الإنتاجية والصناعية والتجارية والخدمية وأصحاب المهن الحرة غير المسجلين رسميًا.</p>
@@ -795,7 +800,7 @@
 
       <div class="pcard reveal" data-cat="formal">
         <span class="tag">القطاع الرسمي</span>
-        <span class="smart-badge fast">⚡ الأسرع صرفًا</span>
+        <span class="smart-badge best">👁️ الأكثر مشاهدة</span>
         <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M6 18l18-11 18 11"/><path class="stroke" d="M9 18v20h30V18"/><path class="stroke" d="M20 38V28h8v10"/></svg></div>
         <h3 data-pname="تمويل متناهي الصغر — رسمي">تمويل متناهي الصغر — رسمي</h3>
         <p>للمنشآت الفردية والشركات المسجلة رسميًا، بمبيعات سنوية حتى مليون جنيه أو رأس مال مصدر حتى 50 ألف جنيه.</p>
@@ -851,7 +856,7 @@
       </div>
 
     </div>
-    <p style="font-size:0.75rem;color:var(--ink-soft);margin-top:16px;">* التوك توك والتروسيكل والفان: التمويل مقتصر على محافظات الوجه البحري والقبلي والدلتا (محظور بالقاهرة الكبرى والإسكندرية). الشرائح والمدد تختلف حسب نوع المركبة، راجع مستشار التمويل للتفاصيل الكاملة.</p>
+    <p style="font-size:0.75rem;color:var(--ink-soft);margin-top:16px;">* تمويل وسائل النقل (بما في ذلك التوك توك والتروسيكل والفان والسيارات) متاح الآن في جميع فروع بنك القاهرة بكل المحافظات. الشرائح والمدد تختلف حسب نوع المركبة، راجع مستشار التمويل للتفاصيل الكاملة.</p>
   </div>
 </section>
 
@@ -929,7 +934,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q"><span>ليه بتطلبوا الوصول لموقعي الجغرافي؟</span> <span class="chev">▾</span></div>
-        <div class="faq-a">موقعك الفعلي بيستخدم لتحديد أقرب فرع لك، ولاستبعاد المنتجات غير المتاحة بمحافظتك (زي التوك توك والتروسيكل بالقاهرة والإسكندرية) قبل ما تكمل طلبك.</div>
+        <div class="faq-a">موقعك الفعلي بيستخدم لتحديد أقرب فرع لك من فروع بنك القاهرة، عشان نوصلك بمستشار التمويل المناسب لمنطقتك بسرعة.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q"><span>هل فيه رسوم على تقديم الطلب؟</span> <span class="chev">▾</span></div>
@@ -943,7 +948,7 @@
   <button class="btn-primary" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">ابدأ طلبك الآن — تقديم وصرف خلال 24 ساعة</button>
 </div>
 
-<a href="https://wa.me/+201030702005" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="تواصل عبر واتساب">
+<a href="https://wa.me/201030702005" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="تواصل عبر واتساب">
   <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.7 4.611 1.909 6.478L4 29l7.72-1.858A11.93 11.93 0 0016 27c6.627 0 12-5.373 12-12S22.628 3 16.001 3zm0 21.818c-2.02 0-3.91-.59-5.5-1.606l-.395-.243-4.58 1.102 1.128-4.46-.257-.412A9.77 9.77 0 016.182 15c0-5.417 4.402-9.818 9.819-9.818 5.416 0 9.817 4.401 9.817 9.818 0 5.417-4.401 9.818-9.817 9.818zm5.377-7.34c-.294-.147-1.744-.86-2.014-.958-.27-.098-.467-.147-.663.147-.196.294-.76.958-.932 1.155-.172.196-.343.221-.638.074-.294-.147-1.243-.458-2.367-1.461-.875-.78-1.466-1.744-1.638-2.038-.172-.294-.018-.453.13-.6.133-.132.294-.343.441-.515.147-.172.196-.294.294-.49.098-.196.049-.368-.025-.515-.074-.147-.663-1.598-.909-2.188-.24-.575-.483-.497-.663-.506-.172-.008-.368-.01-.564-.01-.196 0-.515.074-.785.368-.27.294-1.03 1.007-1.03 2.455 0 1.448 1.055 2.847 1.203 3.043.147.196 2.076 3.17 5.032 4.444.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.744-.713 1.99-1.402.245-.688.245-1.278.172-1.401-.074-.123-.27-.196-.564-.343z"/></svg>
 </a>
 
@@ -959,12 +964,16 @@
       </div>
       <div>
         <h5>روابط سريعة</h5>
-        <a href="#products">المنتجات</a>
+        <a href="#apply" onclick="event.preventDefault(); document.getElementById('apply').scrollIntoView({behavior:'smooth'});">المنتجات</a>
         <a href="#flow">خطوات التقديم</a>
         <a href="#faq">الأسئلة الشائعة</a>
       </div>
       <div>
         <h5>تواصل معنا</h5>
+        <a href="https://wa.me/201030702005" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب" style="display:flex;align-items:center;gap:6px;">
+          <svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;flex:none;"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.7 4.611 1.909 6.478L4 29l7.72-1.858A11.93 11.93 0 0016 27c6.627 0 12-5.373 12-12S22.628 3 16.001 3zm0 21.818c-2.02 0-3.91-.59-5.5-1.606l-.395-.243-4.58 1.102 1.128-4.46-.257-.412A9.77 9.77 0 016.182 15c0-5.417 4.402-9.818 9.819-9.818 5.416 0 9.817 4.401 9.817 9.818 0 5.417-4.401 9.818-9.817 9.818zm5.377-7.34c-.294-.147-1.744-.86-2.014-.958-.27-.098-.467-.147-.663.147-.196.294-.76.958-.932 1.155-.172.196-.343.221-.638.074-.294-.147-1.243-.458-2.367-1.461-.875-.78-1.466-1.744-1.638-2.038-.172-.294-.018-.453.13-.6.133-.132.294-.343.441-.515.147-.172.196-.294.294-.49.098-.196.049-.368-.025-.515-.074-.147-.663-1.598-.909-2.188-.24-.575-.483-.497-.663-.506-.172-.008-.368-.01-.564-.01-.196 0-.515.074-.785.368-.27.294-1.03 1.007-1.03 2.455 0 1.448 1.055 2.847 1.203 3.043.147.196 2.076 3.17 5.032 4.444.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.744-.713 1.99-1.402.245-.688.245-1.278.172-1.401-.074-.123-.27-.196-.564-.343z"/></svg>
+          واتساب
+        </a>
         <a href="tel:16990">الخط الساخن: 16990</a>
         <a href="https://www.bdc.com.eg" target="_blank" rel="noopener">الموقع الرسمي bdc.com.eg</a>
         <a href="https://www.facebook.com/BDCEgypt" target="_blank" rel="noopener">فيسبوك</a>
@@ -1208,7 +1217,6 @@
         coordsData.governorate = place.gov;
         coordsData.city = place.city;
         coordsData.locality = place.locality;
-        applyLocationBasedProductFilter(place.gov);
 
         btnLoc.textContent = 'تم تحديد الموقع ✓';
         setTimeout(()=>{
@@ -1216,6 +1224,8 @@
           gs3.classList.add('active');
           panel2.style.display='none';
           panel3.style.display='block';
+          const productsSection = document.getElementById('products');
+          if(productsSection) productsSection.style.display = 'block';
         },500);
       },
       (error)=>{
@@ -1291,28 +1301,6 @@
       inp.value = inp.value.replace(/[^0-9]/g,'');
     });
   });
-
-  // ترشيح منتجات وسائل النقل تلقائيًا — التوك توك والتروسيكل والفان
-  // ممنوعة تمويلها في القاهرة الكبرى والإسكندرية حسب محددات المنح
-  function applyLocationBasedProductFilter(governorate){
-    const restrictedGovs = ['القاهرة', 'الجيزة', 'القليوبية', 'الإسكندرية'];
-    const isRestricted = restrictedGovs.some(g => (governorate || '').includes(g));
-    document.querySelectorAll('.pcard[data-cat*="transport"]').forEach(card=>{
-      const existingNotice = card.querySelector('.loc-restricted-notice');
-      if(isRestricted){
-        card.classList.add('loc-restricted');
-        if(!existingNotice){
-          const notice = document.createElement('div');
-          notice.className = 'loc-restricted-notice';
-          notice.textContent = '⚠️ التوك توك/التروسيكل غير متاح تمويله في محافظتك — باقي وسائل النقل متاحة، راجع مستشار التمويل';
-          card.insertBefore(notice, card.firstChild);
-        }
-      } else {
-        card.classList.remove('loc-restricted');
-        if(existingNotice) existingNotice.remove();
-      }
-    });
-  }
 
   // Choose product -> open step 4 form
   const gs4 = document.getElementById('gs4');
