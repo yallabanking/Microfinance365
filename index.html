@@ -2,7 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#D9330A">
 <title>Microfinance 365 — بنك القاهرة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -18,9 +20,10 @@
     --paper:#FFFBF6;
     --line:rgba(46,15,6,0.12);
     --shadow:0 20px 50px -20px rgba(46,15,6,0.35);
+    color-scheme: light only; /* يمنع نظام تشغيل الموبايل من فرض الدارك مود على عناصر الفورم والصفحة */
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;color-scheme:light only;background:var(--cream);}
   body{
     font-family:'Tajawal',sans-serif;
     background:var(--cream);
@@ -28,6 +31,7 @@
     line-height:1.7;
     overflow-x:hidden;
     font-size:15px;
+    padding-bottom:env(safe-area-inset-bottom);
   }
   h1,h2,h3,.display{font-family:'Cairo',sans-serif;}
   a{color:inherit;text-decoration:none;}
@@ -271,12 +275,114 @@
     position:absolute;top:16px;left:16px;font-size:0.66rem;font-weight:800;
     background:var(--cream);color:var(--flame);padding:3px 10px;border-radius:999px;
   }
+  .smart-badge{
+    position:absolute;top:16px;right:16px;font-size:0.62rem;font-weight:800;
+    padding:4px 10px;border-radius:999px;color:#fff;box-shadow:0 6px 14px -6px rgba(0,0,0,0.3);
+  }
+  .smart-badge.best{background:linear-gradient(135deg,var(--amber),var(--ember));}
+  .smart-badge.fast{background:linear-gradient(135deg,var(--ember),var(--flame));}
   .pcard h3{font-size:1.02rem;margin-bottom:6px;padding-left:60px;}
   .pcard p{font-size:0.85rem;color:var(--ink-soft);margin-bottom:14px;}
   .pcard .facts{display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:12px;}
   .pcard .facts .f{display:flex;justify-content:space-between;font-size:0.78rem;}
   .pcard .facts .f b{color:var(--flame);font-weight:800;}
   .pcard .facts .f span:first-child{color:var(--ink-soft);}
+
+  /* Smart card — expandable required documents */
+  .docs-toggle{
+    width:100%;background:transparent;border:none;color:var(--flame);font-weight:700;
+    font-size:0.78rem;padding:10px 0 2px;cursor:pointer;display:flex;align-items:center;
+    justify-content:center;gap:4px;
+  }
+  .docs-toggle .chevd{transition:transform .25s ease;}
+  .docs-toggle.open .chevd{transform:rotate(180deg);}
+  .docs-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .docs-panel.open{max-height:220px;}
+  .docs-panel ul{list-style:none;padding:10px 0 4px;font-size:0.78rem;color:var(--ink-soft);}
+  .docs-panel li{padding:4px 0 4px 18px;position:relative;}
+  .docs-panel li:before{content:'✓';position:absolute;right:0;color:var(--ember);font-weight:800;}
+
+  /* Installment calculator */
+  .calc-box{
+    background:var(--paper);border:1px solid var(--line);border-radius:20px;
+    padding:26px 24px;max-width:560px;box-shadow:var(--shadow);
+  }
+  .calc-row{margin-bottom:20px;}
+  .calc-row:last-of-type{margin-bottom:0;}
+  .calc-row label{display:block;font-size:0.88rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
+  .calc-row label b{color:var(--flame);font-family:'Cairo';font-size:1rem;}
+  .calc-row select{
+    width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;
+    font-family:'Tajawal';font-size:0.92rem;background:#fff;color:var(--ink);
+  }
+  .calc-row input[type=range]{
+    width:100%;-webkit-appearance:none;height:6px;border-radius:999px;
+    background:linear-gradient(90deg,var(--flame),var(--amber));outline:none;
+  }
+  .calc-row input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+    background:#fff;border:4px solid var(--flame);cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  }
+  .calc-row input[type=range]::-moz-range-thumb{
+    width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--flame);cursor:pointer;
+  }
+  .calc-result{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;
+    background:linear-gradient(120deg,#FFF0E2,#FFE3C4);border-radius:14px;padding:18px;
+    border:1px solid rgba(217,51,10,0.2);
+  }
+  .calc-result-item{text-align:center;}
+  .calc-result-item span{display:block;font-size:0.72rem;color:var(--ink-soft);margin-bottom:4px;}
+  .calc-result-item b{font-family:'Cairo';font-size:1.25rem;color:var(--flame);}
+  .calc-note{font-size:0.72rem;color:var(--ink-soft);margin-top:14px;text-align:center;}
+
+  /* Order tracking */
+  .track-box .inputrow{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;display:flex;}
+  .track-box .inputrow input{border:none;outline:none;padding:13px 14px;flex:1;font-size:0.95rem;background:transparent;color:var(--ink);}
+  .track-result{margin-top:16px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;}
+  .track-result.found{border-color:rgba(34,150,80,0.35);background:#EEFBF2;}
+  .track-result.notfound{border-color:rgba(217,51,10,0.35);background:#FFEDE7;}
+  .track-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:6px 0;border-bottom:1px dashed var(--line);}
+  .track-row:last-child{border-bottom:none;}
+  .track-row span:first-child{color:var(--ink-soft);}
+  .track-row b{color:var(--flame);}
+  .track-status-badge{
+    display:inline-block;padding:4px 14px;border-radius:999px;font-weight:800;font-size:0.8rem;
+    background:var(--amber);color:#3A2400;
+  }
+
+  /* Trust strip */
+  .trust-strip{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;
+  }
+  @media(max-width:700px){.trust-strip{grid-template-columns:repeat(2,1fr);}}
+  .trust-item{
+    display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+    font-size:1.6rem;
+  }
+  .trust-item span{font-size:0.76rem;font-weight:700;color:var(--ink-soft);}
+
+  /* Location-based product restriction notice */
+  .pcard.loc-restricted{opacity:0.85;}
+  .loc-restricted-notice{
+    background:#FFF3CD;color:#7A5A00;border:1px solid rgba(122,90,0,0.25);
+    border-radius:10px;padding:8px 10px;font-size:0.72rem;font-weight:700;
+    margin-bottom:12px;line-height:1.6;
+  }
+
+  /* Renewal quick path banner */
+  .renewal-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:linear-gradient(120deg,#FFF0E2,#FFE3C4);border:1px solid rgba(217,51,10,0.2);
+    border-radius:14px;padding:14px 18px;margin-bottom:22px;
+  }
+  .renewal-banner span{font-size:0.85rem;font-weight:700;color:var(--ink-soft);}
+  .renewal-btn{
+    background:var(--flame);color:#fff;border:none;border-radius:10px;padding:10px 18px;
+    font-family:'Cairo';font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;
+  }
+  .renewal-btn:hover{background:var(--ember);}
 
   /* FLOW */
   .flow{display:flex;gap:0;position:relative;}
@@ -431,7 +537,31 @@
     .gate-card{padding:20px 16px 18px;border-radius:18px;}
     .pcard h3{padding-left:0;margin-top:6px;}
     .pcard .tag{position:static;display:inline-block;margin-bottom:10px;}
+    /* منع الزووم التلقائي على iOS لما يفتح لوحة المفاتيح — أي input لازم يكون 16px فأكتر */
+    .field input, .fin-field input, select, .cam-btn, .btn-primary, .btn-ghost{font-size:16px;}
   }
+
+  /* شريط CTA ثابت في الأسفل للموبايل — يظهر بعد ما يعدي المستخدم قسم الـ hero */
+  .mobile-cta-bar{
+    position:fixed;bottom:0;left:0;right:0;z-index:150;
+    background:var(--paper);border-top:1px solid var(--line);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 30px -14px rgba(46,15,6,0.25);
+    display:none;transform:translateY(100%);transition:transform .35s ease;
+  }
+  .mobile-cta-bar.show{display:block;transform:translateY(0);}
+  .mobile-cta-bar .btn-primary{margin:0;padding:12px;font-size:0.9rem;}
+  @media(min-width:900px){.mobile-cta-bar{display:none !important;}}
+
+  .whatsapp-fab{
+    position:fixed;bottom:20px;left:20px;z-index:140;
+    width:54px;height:54px;border-radius:50%;background:#25D366;color:#fff;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -8px rgba(0,0,0,0.4);
+    transition:transform .2s ease;
+  }
+  .whatsapp-fab:hover{transform:scale(1.08);}
+  .whatsapp-fab svg{width:28px;height:28px;}
+  @media(max-width:900px){.whatsapp-fab.with-cta{bottom:86px;}}
 </style>
 </head>
 <body>
@@ -467,8 +597,10 @@
     </div>
     <div class="navlinks">
       <a href="#products">المنتجات</a>
+      <a href="#calculator">حاسبة القسط</a>
       <a href="#flow">خطوات التقديم</a>
       <a href="#features">مزايا النظام</a>
+      <a href="#track">تتبع طلبك</a>
       <a href="#faq">الأسئلة الشائعة</a>
     </div>
     <a href="#apply" class="navcta">ابدأ طلبك</a>
@@ -676,10 +808,16 @@
       <div class="filter-chip" data-f="debt">شراء مديونية</div>
     </div>
 
+    <div class="renewal-banner reveal">
+      <span>🔁 عميل حالي وعايز تجدد قرضك أو تنقل مديونية من بنك تاني؟</span>
+      <button class="renewal-btn" onclick="document.querySelector('.filter-chip[data-f=debt]').click(); document.getElementById('products').scrollIntoView({behavior:'smooth'})">اعرض منتجات شراء المديونية</button>
+    </div>
+
     <div class="cards-grid">
 
       <div class="pcard reveal" data-cat="informal">
         <span class="tag">القطاع غير الرسمي</span>
+        <span class="smart-badge best">⭐ الأكثر طلبًا</span>
         <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M8 40V20l16-13 16 13v20"/><path class="stroke" d="M19 40V26h10v14"/></svg></div>
         <h3 data-pname="تمويل متناهي الصغر — غير رسمي">تمويل متناهي الصغر — غير رسمي</h3>
         <p>لأصحاب الأنشطة الإنتاجية والصناعية والتجارية والخدمية وأصحاب المهن الحرة غير المسجلين رسميًا.</p>
@@ -708,6 +846,7 @@
 
       <div class="pcard reveal" data-cat="formal">
         <span class="tag">القطاع الرسمي</span>
+        <span class="smart-badge fast">⚡ الأسرع صرفًا</span>
         <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M6 18l18-11 18 11"/><path class="stroke" d="M9 18v20h30V18"/><path class="stroke" d="M20 38V28h8v10"/></svg></div>
         <h3 data-pname="تمويل متناهي الصغر — رسمي">تمويل متناهي الصغر — رسمي</h3>
         <p>للمنشآت الفردية والشركات المسجلة رسميًا، بمبيعات سنوية حتى مليون جنيه أو رأس مال مصدر حتى 50 ألف جنيه.</p>
@@ -767,6 +906,52 @@
   </div>
 </section>
 
+<!-- INSTALLMENT CALCULATOR -->
+<section id="calculator">
+  <div class="wrap">
+    <div class="kicker reveal">حاسبة تفاعلية</div>
+    <h2 class="sec-title reveal">احسب قسطك الشهري قبل ما تقدّم</h2>
+    <p class="sec-sub reveal">اختار المنتج والمبلغ والمدة، وشوف القسط التقريبي فورًا حسب سعر العائد الرسمي للمنتج.</p>
+
+    <div class="calc-box reveal">
+      <div class="calc-row">
+        <label>المنتج</label>
+        <div class="inputrow">
+          <select id="calcProduct">
+            <option value="informal-42" data-rate="42" data-min="5000" data-max="200000" data-maxmonths="48">متناهي الصغر — غير رسمي (42%)</option>
+            <option value="informal-debt-42" data-rate="42" data-min="5000" data-max="100000" data-maxmonths="48">شراء مديونية — غير رسمي (42%)</option>
+            <option value="formal-38" data-rate="38" data-min="50000" data-max="500000" data-maxmonths="60">متناهي الصغر — رسمي (38%)</option>
+            <option value="formal-debt-36" data-rate="36" data-min="50000" data-max="500000" data-maxmonths="60">شراء مديونية — رسمي (36%)</option>
+            <option value="transport-42" data-rate="42" data-min="5000" data-max="400000" data-maxmonths="36">وسائل النقل ومعدات البناء (42%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc-row">
+        <label>مبلغ التمويل: <b id="calcAmountLabel">50,000</b> ج.م</label>
+        <input type="range" id="calcAmountSlider" min="5000" max="200000" step="1000" value="50000">
+      </div>
+
+      <div class="calc-row">
+        <label>مدة السداد: <b id="calcMonthsLabel">24</b> شهر</label>
+        <input type="range" id="calcMonthsSlider" min="4" max="48" step="1" value="24">
+      </div>
+
+      <div class="calc-result">
+        <div class="calc-result-item">
+          <span>القسط الشهري التقريبي</span>
+          <b id="calcMonthlyResult">0 ج.م</b>
+        </div>
+        <div class="calc-result-item">
+          <span>إجمالي المبلغ المسدد</span>
+          <b id="calcTotalResult">0 ج.م</b>
+        </div>
+      </div>
+      <p class="calc-note">* حساب تقريبي بنظام العائد الثابت السنوي، للاسترشاد فقط — القسط النهائي يتحدد بعد المراجعة الائتمانية.</p>
+    </div>
+  </div>
+</section>
+
 <!-- FLOW -->
 <section id="flow">
   <div class="wrap">
@@ -816,6 +1001,34 @@
   </div>
 </section>
 
+<!-- ORDER TRACKING -->
+<section id="track">
+  <div class="wrap" style="max-width:640px;">
+    <div class="kicker reveal">تتبع طلبك</div>
+    <h2 class="sec-title reveal">قدّمت طلب قبل كده؟ اعرف حالته دلوقتي</h2>
+    <p class="sec-sub reveal">اكتب رقم الطلب اللي استلمته بعد التقديم عشان تعرف آخر تحديث لحالته.</p>
+    <div class="track-box reveal">
+      <div class="inputrow">
+        <input type="text" id="trackInput" placeholder="مثال: MFN-260812-4821" style="direction:ltr;text-align:center;font-family:'Cairo';font-weight:700;">
+        <button class="btn-primary" id="trackBtn" style="width:auto;padding:12px 20px;border-radius:0 12px 12px 0;">بحث</button>
+      </div>
+      <div class="track-result" id="trackResult" style="display:none;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BADGES -->
+<section id="trust" style="padding-top:0;">
+  <div class="wrap">
+    <div class="trust-strip reveal">
+      <div class="trust-item">🔒<span>بياناتك مشفّرة بالكامل</span></div>
+      <div class="trust-item">🏛️<span>تحت إشراف بنك القاهرة</span></div>
+      <div class="trust-item">✅<span>مرخّص من البنك المركزي المصري</span></div>
+      <div class="trust-item">⭐<span>+120 ألف عميل ممول</span></div>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section id="faq">
   <div class="wrap" style="max-width:760px;">
@@ -842,6 +1055,14 @@
   </div>
 </section>
 
+<div class="mobile-cta-bar" id="mobileCtaBar">
+  <button class="btn-primary" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">ابدأ طلبك الآن — تقديم وصرف خلال 24 ساعة</button>
+</div>
+
+<a href="https://wa.me/16990" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="تواصل عبر واتساب">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.7 4.611 1.909 6.478L4 29l7.72-1.858A11.93 11.93 0 0016 27c6.627 0 12-5.373 12-12S22.628 3 16.001 3zm0 21.818c-2.02 0-3.91-.59-5.5-1.606l-.395-.243-4.58 1.102 1.128-4.46-.257-.412A9.77 9.77 0 016.182 15c0-5.417 4.402-9.818 9.819-9.818 5.416 0 9.817 4.401 9.817 9.818 0 5.417-4.401 9.818-9.817 9.818zm5.377-7.34c-.294-.147-1.744-.86-2.014-.958-.27-.098-.467-.147-.663.147-.196.294-.76.958-.932 1.155-.172.196-.343.221-.638.074-.294-.147-1.243-.458-2.367-1.461-.875-.78-1.466-1.744-1.638-2.038-.172-.294-.018-.453.13-.6.133-.132.294-.343.441-.515.147-.172.196-.294.294-.49.098-.196.049-.368-.025-.515-.074-.147-.663-1.598-.909-2.188-.24-.575-.483-.497-.663-.506-.172-.008-.368-.01-.564-.01-.196 0-.515.074-.785.368-.27.294-1.03 1.007-1.03 2.455 0 1.448 1.055 2.847 1.203 3.043.147.196 2.076 3.17 5.032 4.444.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.744-.713 1.99-1.402.245-.688.245-1.278.172-1.401-.074-.123-.27-.196-.564-.343z"/></svg>
+</a>
+
 <footer>
   <div class="wrap">
     <div class="foot-grid">
@@ -860,9 +1081,10 @@
       </div>
       <div>
         <h5>تواصل معنا</h5>
-        <a href="#">الخط الساخن: 19677</a>
-        <a href="#">دعم واتساب</a>
-        <a href="#">أقرب فرع لك</a>
+        <a href="tel:16990">الخط الساخن: 16990</a>
+        <a href="https://www.bdc.com.eg" target="_blank" rel="noopener">الموقع الرسمي bdc.com.eg</a>
+        <a href="https://www.facebook.com/BDCEgypt" target="_blank" rel="noopener">فيسبوك</a>
+        <a href="https://www.instagram.com/bdcegypt" target="_blank" rel="noopener">إنستجرام</a>
       </div>
     </div>
     <div class="foot-bottom">© 2026 بنك القاهرة — جميع الحقوق محفوظة. نموذج تصميم تسويقي مقترح وغير رسمي، البيانات من ملخص محددات المنح الداخلية.</div>
@@ -874,7 +1096,7 @@
   // إعداد Supabase — حط بياناتك هنا (من Settings > API في مشروعك)
   // ملاحظة: لازم القيمتين يفضلوا بين علامتي تنصيص ' ' وعلى سطر واحد بدون مسافات زيادة
   // ============================================================
-  window.SUPABASE_URL = 'https://aisfzvkpakxroaizogus.supabase.co';
+  window.SUPABASE_URL = 'https://aisfzvkpakxroaizogus.supabase.co/rest';
   window.SUPABASE_ANON_KEY = 'sb_publishable_hwc3keZo1mxrux-ymxguNg_K9YVE-Fu';
 
   window.supabaseClient = null;
@@ -924,6 +1146,25 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
   },{threshold:0.12});
   revealEls.forEach(el=>io.observe(el));
+
+  // شريط CTA الثابت للموبايل — يظهر بعد ما نعدي قسم الـ hero وتختفي البطاقة العائمة
+  const mobileCtaBar = document.getElementById('mobileCtaBar');
+  const heroSection = document.querySelector('.hero');
+  const whatsappFab = document.querySelector('.whatsapp-fab');
+  if(mobileCtaBar && heroSection){
+    const ctaObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          mobileCtaBar.classList.remove('show');
+          if(whatsappFab) whatsappFab.classList.remove('with-cta');
+        } else {
+          mobileCtaBar.classList.add('show');
+          if(whatsappFab) whatsappFab.classList.add('with-cta');
+        }
+      });
+    }, { threshold: 0 });
+    ctaObserver.observe(heroSection);
+  }
 
   // Phone validation: 11 digits, starts with 010/011/012/015
   const phoneInput = document.getElementById('phoneInput');
@@ -1083,6 +1324,7 @@
         coordsData.governorate = place.gov;
         coordsData.city = place.city;
         coordsData.locality = place.locality;
+        applyLocationBasedProductFilter(place.gov);
 
         btnLoc.textContent = 'تم تحديد الموقع ✓';
         setTimeout(()=>{
@@ -1165,6 +1407,28 @@
       inp.value = inp.value.replace(/[^0-9]/g,'');
     });
   });
+
+  // ترشيح منتجات وسائل النقل تلقائيًا — التوك توك والتروسيكل والفان
+  // ممنوعة تمويلها في القاهرة الكبرى والإسكندرية حسب محددات المنح
+  function applyLocationBasedProductFilter(governorate){
+    const restrictedGovs = ['القاهرة', 'الجيزة', 'القليوبية', 'الإسكندرية'];
+    const isRestricted = restrictedGovs.some(g => (governorate || '').includes(g));
+    document.querySelectorAll('.pcard[data-cat*="transport"]').forEach(card=>{
+      const existingNotice = card.querySelector('.loc-restricted-notice');
+      if(isRestricted){
+        card.classList.add('loc-restricted');
+        if(!existingNotice){
+          const notice = document.createElement('div');
+          notice.className = 'loc-restricted-notice';
+          notice.textContent = '⚠️ التوك توك/التروسيكل غير متاح تمويله في محافظتك — باقي وسائل النقل متاحة، راجع مستشار التمويل';
+          card.insertBefore(notice, card.firstChild);
+        }
+      } else {
+        card.classList.remove('loc-restricted');
+        if(existingNotice) existingNotice.remove();
+      }
+    });
+  }
 
   // Choose product -> open step 4 form
   const gs4 = document.getElementById('gs4');
@@ -1412,6 +1676,141 @@
       submitBtn.textContent = 'إرسال بيانات الطلب';
     }
   });
+
+  // Smart cards — إضافة قائمة الأوراق المطلوبة القابلة للطي لكل منتج
+  const REQUIRED_DOCS = {
+    'تمويل متناهي الصغر — غير رسمي': ['صورة بطاقة الرقم القومي سارية', 'إثبات محل إقامة (فاتورة مرافق)', 'إثبات ممارسة النشاط (صور للمحل/الورشة)', 'صورة شخصية حديثة'],
+    'شراء مديونية — غير رسمي': ['صورة بطاقة الرقم القومي سارية', 'كشف حساب القرض القائم من الجهة الأخرى', 'إثبات محل إقامة', 'إثبات ممارسة النشاط'],
+    'تمويل متناهي الصغر — رسمي': ['صورة بطاقة الرقم القومي سارية', 'السجل التجاري / البطاقة الضريبية', 'إقرارات ضريبية أو مبيعات آخر سنة', 'إثبات محل إقامة النشاط'],
+    'شراء مديونية — رسمي': ['صورة بطاقة الرقم القومي سارية', 'السجل التجاري / البطاقة الضريبية', 'كشف حساب القرض القائم من الجهة الأخرى', 'خطاب تسوية من الجهة الدائنة'],
+    'تمويل وسائل النقل ومعدات البناء': ['صورة بطاقة الرقم القومي سارية', 'رخصة قيادة سارية (لو منطبق)', 'عرض سعر أو فاتورة المركبة/المعدة', 'إثبات محل إقامة'],
+    'شراء مديونية — وسائل نقل': ['صورة بطاقة الرقم القومي سارية', 'رخصة المركبة سارية', 'كشف حساب القرض القائم من الجهة الأخرى', 'إثبات محل إقامة'],
+  };
+
+  document.querySelectorAll('.pcard').forEach(card=>{
+    const pname = card.querySelector('h3')?.dataset.pname;
+    const docs = REQUIRED_DOCS[pname];
+    if(!docs) return;
+    const chooseBtn = card.querySelector('.choose-btn');
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'docs-toggle';
+    toggle.innerHTML = 'الأوراق المطلوبة <span class="chevd">▾</span>';
+
+    const panel = document.createElement('div');
+    panel.className = 'docs-panel';
+    const ul = document.createElement('ul');
+    docs.forEach(d=>{ const li = document.createElement('li'); li.textContent = d; ul.appendChild(li); });
+    panel.appendChild(ul);
+
+    toggle.addEventListener('click', ()=>{
+      toggle.classList.toggle('open');
+      panel.classList.toggle('open');
+    });
+
+    card.insertBefore(toggle, chooseBtn);
+    card.insertBefore(panel, chooseBtn);
+  });
+
+  // تتبع حالة الطلب برقم الطلب
+  const trackBtn = document.getElementById('trackBtn');
+  const trackInput = document.getElementById('trackInput');
+  const trackResult = document.getElementById('trackResult');
+
+  if(trackBtn){
+    trackBtn.addEventListener('click', async ()=>{
+      const num = trackInput.value.trim().toUpperCase();
+      if(!num){ showToast('من فضلك اكتب رقم الطلب'); return; }
+
+      if(!window.supabaseClient){
+        showToast('الاتصال بقاعدة البيانات لسه مش جاهز، جرب تاني بعد شوية');
+        return;
+      }
+
+      trackBtn.disabled = true;
+      trackBtn.textContent = '...';
+      trackResult.style.display = 'none';
+      trackResult.className = 'track-result';
+
+      try {
+        const { data, error } = await window.supabaseClient
+          .rpc('track_application', { req_number: num });
+
+        if (error) throw error;
+        const row = Array.isArray(data) ? data[0] : data;
+
+        if(!row){
+          trackResult.className = 'track-result notfound';
+          trackResult.innerHTML = '<div style="text-align:center;font-weight:700;">مفيش طلب مسجل بالرقم ده. تأكد من كتابته صح.</div>';
+        } else {
+          const dateStr = new Date(row.created_at).toLocaleDateString('ar-EG');
+          trackResult.className = 'track-result found';
+          trackResult.innerHTML = `
+            <div style="text-align:center;margin-bottom:12px;"><span class="track-status-badge">${row.status || 'جديد'}</span></div>
+            <div class="track-row"><span>المنتج</span><b>${row.chosen_product}</b></div>
+            <div class="track-row"><span>الفرع المتابع للطلب</span><b>${row.nearest_branch || '--'}</b></div>
+            <div class="track-row"><span>تاريخ التقديم</span><b>${dateStr}</b></div>
+          `;
+        }
+        trackResult.style.display = 'block';
+      } catch(err){
+        console.error(err);
+        showToast('حصل خطأ أثناء البحث، حاول تاني');
+      } finally {
+        trackBtn.disabled = false;
+        trackBtn.textContent = 'بحث';
+      }
+    });
+  }
+
+  // حاسبة القسط التفاعلية
+  const calcProduct = document.getElementById('calcProduct');
+  const calcAmountSlider = document.getElementById('calcAmountSlider');
+  const calcMonthsSlider = document.getElementById('calcMonthsSlider');
+  const calcAmountLabel = document.getElementById('calcAmountLabel');
+  const calcMonthsLabel = document.getElementById('calcMonthsLabel');
+  const calcMonthlyResult = document.getElementById('calcMonthlyResult');
+  const calcTotalResult = document.getElementById('calcTotalResult');
+
+  function fmtEGP(n){ return Math.round(n).toLocaleString('en-US') + ' ج.م'; }
+
+  function updateCalcBounds(){
+    const opt = calcProduct.selectedOptions[0];
+    const min = Number(opt.dataset.min);
+    const max = Number(opt.dataset.max);
+    const maxMonths = Number(opt.dataset.maxmonths);
+    calcAmountSlider.min = min;
+    calcAmountSlider.max = max;
+    if(Number(calcAmountSlider.value) < min) calcAmountSlider.value = min;
+    if(Number(calcAmountSlider.value) > max) calcAmountSlider.value = max;
+    calcMonthsSlider.max = maxMonths;
+    if(Number(calcMonthsSlider.value) > maxMonths) calcMonthsSlider.value = maxMonths;
+  }
+
+  function runCalc(){
+    const opt = calcProduct.selectedOptions[0];
+    const rate = Number(opt.dataset.rate) / 100; // سعر عائد سنوي ثابت
+    const amount = Number(calcAmountSlider.value);
+    const months = Number(calcMonthsSlider.value);
+    const years = months / 12;
+    const totalInterest = amount * rate * years;
+    const total = amount + totalInterest;
+    const monthly = total / months;
+
+    calcAmountLabel.textContent = amount.toLocaleString('en-US');
+    calcMonthsLabel.textContent = months;
+    calcMonthlyResult.textContent = fmtEGP(monthly);
+    calcTotalResult.textContent = fmtEGP(total);
+  }
+
+  if(calcProduct){
+    calcProduct.addEventListener('change', ()=>{ updateCalcBounds(); runCalc(); });
+    calcAmountSlider.addEventListener('input', runCalc);
+    calcMonthsSlider.addEventListener('input', runCalc);
+    updateCalcBounds();
+    runCalc();
+  }
 
   // Product filter
   document.querySelectorAll('.filter-chip').forEach(chip=>{
