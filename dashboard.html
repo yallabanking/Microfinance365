@@ -154,7 +154,7 @@
     <button id="loginBtn">تسجيل الدخول</button>
     <div class="login-err" id="loginErr"></div>
     <div class="login-hint">
-      لو لسه معملتش حساب موظف: من Supabase Dashboard → Authentication → Add user، أنشئ إيميل وباسورد للموظف اللي هيدخل هنا.
+     Developed by Mohamed AbdElHadi.
     </div>
   </div>
 </div>
@@ -419,7 +419,7 @@
     // 1) هل عنده صلاحية مربوطة فعليًا بالـ id بتاعه؟
     let { data: byId } = await window.supabaseClient
       .from('staff_profiles').select('*').eq('id', user.id).maybeSingle();
-    if(byId) return byId;
+    if(byId) return { profile: byId, debug: null };
 
     // 2) هل فيه صلاحية معلّقة بنفس إيميله لسه ماتربطتش؟
     let { data: pending } = await window.supabaseClient
@@ -427,15 +427,16 @@
     if(pending){
       const { data: claimed, error: claimErr } = await window.supabaseClient
         .from('staff_profiles').update({ id: user.id }).eq('email', user.email).select().maybeSingle();
-      if(!claimErr && claimed) return claimed;
+      if(!claimErr && claimed) return { profile: claimed, debug: null };
+      if(claimErr) return { profile: null, debug: 'تعذر ربط الصلاحية المعلّقة: ' + claimErr.message };
     }
 
     // 3) مفيش صلاحيات مسجلة خالص لحد دلوقتي؟ — أول حد يسجل دخول
     // بيتفعّل أدمن تلقائيًا (الدالة نفسها بترفض لو فيه أدمن موجود بالفعل)
     const { data: firstAdmin, error: firstAdminErr } = await window.supabaseClient.rpc('claim_first_admin');
-    if(!firstAdminErr && firstAdmin) return firstAdmin;
+    if(!firstAdminErr && firstAdmin) return { profile: firstAdmin, debug: null };
 
-    return null;
+    return { profile: null, debug: firstAdminErr ? firstAdminErr.message : 'مفيش صلاحية مسجلة بإيميلك، ومفيش أدمن أول اتفعّل قبل كده.' };
   }
 
   async function checkSession(){
@@ -447,10 +448,12 @@
   }
 
   async function tryShowApp(user){
-    const profile = await resolveStaffProfile(user);
+    const { profile, debug } = await resolveStaffProfile(user);
     if(!profile){
-      loginErr.textContent = 'حسابك مش مربوط بأي صلاحية في لوحة التحكم. كلم الأدمن يضيفلك صلاحية بنفس الإيميل ده.';
+      loginErr.textContent = 'حسابك مش مربوط بأي صلاحية في لوحة التحكم. كلم الأدمن يضيفلك صلاحية بنفس الإيميل ده.'
+        + (debug ? ` [تفاصيل تقنية: ${debug}]` : '');
       loginErr.style.display = 'block';
+      console.error('تعذر تحديد صلاحية المستخدم:', debug);
       if(window.supabaseClient) await window.supabaseClient.auth.signOut();
       return;
     }
