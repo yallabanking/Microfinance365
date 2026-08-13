@@ -1021,9 +1021,10 @@
   let nearestBranchData = null;
 
   // فروع بنك القاهرة — بيانات حقيقية (اسم/محافظة/مدينة/إحداثيات) من خرائط جوجل
-  // ملاحظة: القايمة دي أوسع من قبل (30 فرع) وبتغطي أكتر من فرع في المحافظات
-  // الكبيرة زي القاهرة والجيزة، لكنها لسه مش كل الـ166 فرع الرسمية لبنك القاهرة.
-  const BRANCHES = [
+  // ملاحظة: القايمة دي احتياطية بس (Fallback) — تُستخدم فقط لو تعذر
+  // الاتصال بقاعدة البيانات. الفروع الفعلية بتتحمل من جدول branches
+  // في Supabase، وأي فرع تضيفه من لوحة التحكم بيظهر هنا تلقائيًا.
+  let BRANCHES = [
     {name:'فرع طلعت حرب (وسط البلد)', gov:'القاهرة', city:'وسط البلد', lat:30.048374, lng:31.238774},
     {name:'فرع مدينة نصر', gov:'القاهرة', city:'مدينة نصر', lat:30.049575, lng:31.347540},
     {name:'فرع المعادي', gov:'القاهرة', city:'المعادي', lat:29.960514, lng:31.258709},
@@ -1055,6 +1056,22 @@
     {name:'فرع العريش', gov:'شمال سيناء', city:'العريش', lat:31.137066, lng:33.798154},
     {name:'فرع الغردقة', gov:'البحر الأحمر', city:'الغردقة', lat:27.195156, lng:33.837662},
   ];
+
+  // تحميل الفروع الفعلية من قاعدة البيانات — بتستبدل القايمة الاحتياطية
+  // فور ما تتحمل، فأي فرع جديد من لوحة التحكم يبقى متاح فورًا
+  async function loadBranchesFromDB(){
+    if(!window.supabaseClient) return;
+    try {
+      const { data, error } = await window.supabaseClient
+        .from('branches').select('*')
+        .eq('is_active', true);
+      if(!error && data && data.length){
+        BRANCHES = data.map(b => ({ name:b.name, gov:b.governorate, city:b.city, lat:b.lat, lng:b.lng }));
+      }
+    } catch(e){ console.error('تعذر تحميل الفروع من قاعدة البيانات:', e); }
+  }
+  loadBranchesFromDB();
+  window.addEventListener('load', ()=>{ setTimeout(loadBranchesFromDB, 800); });
 
   function haversineKm(lat1, lon1, lat2, lon2){
     const R = 6371;

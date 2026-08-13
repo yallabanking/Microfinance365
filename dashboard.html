@@ -177,6 +177,7 @@
     <button class="tab-btn" data-tab="products">المنتجات</button>
     <button class="tab-btn" data-tab="branches">الفروع</button>
     <button class="tab-btn" data-tab="content">محتوى الموقع</button>
+    <button class="tab-btn" data-tab="users">صلاحيات الموظفين</button>
   </div>
 
   <!-- APPLICATIONS PANEL -->
@@ -191,11 +192,11 @@
           <tr>
             <th>رقم الطلب</th><th>الاسم</th><th>الهاتف</th><th>المنتج</th>
             <th>المحافظة</th><th>أقرب فرع</th><th>المبلغ المطلوب</th>
-            <th>التاريخ</th><th>الحالة</th>
+            <th>التاريخ</th><th>الحالة</th><th>سبب الرفض / ملاحظات</th>
           </tr>
         </thead>
         <tbody id="applicationsBody">
-          <tr class="loading-row"><td colspan="9">جارِ التحميل...</td></tr>
+          <tr class="loading-row"><td colspan="10">جارِ التحميل...</td></tr>
         </tbody>
       </table>
     </div>
@@ -243,6 +244,30 @@
       <h2>محتوى الموقع</h2>
     </div>
     <div id="contentList"><p style="color:var(--ink-soft);">جارِ التحميل...</p></div>
+  </div>
+
+  <!-- USERS / PERMISSIONS PANEL -->
+  <div class="panel" id="panel-users">
+    <div class="panel-head">
+      <h2>صلاحيات الموظفين</h2>
+      <button class="btn-primary" id="addStaffBtn">+ إضافة صلاحية موظف</button>
+    </div>
+    <div class="card" style="padding:14px 18px;margin-bottom:16px;font-size:0.8rem;color:var(--ink-soft);line-height:1.9;">
+      <b style="color:var(--flame);">إزاي تضيف موظف جديد:</b><br>
+      1) اعمل حساب دخول للموظف (إيميل + باسورد) من Supabase Dashboard → Authentication → Add user<br>
+      2) ضيف "صلاحية" هنا بنفس الإيميل، وحدد دوره (أدمن / موظف فرع) وفرعه لو موظف فرع<br>
+      3) أول ما الموظف يسجل دخول بإيميله وباسورده من لوحة التحكم، الصلاحية بتترتبط بحسابه تلقائيًا
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr><th>الإيميل</th><th>الدور</th><th>الفرع</th><th>الحالة</th><th>إجراءات</th></tr>
+        </thead>
+        <tbody id="staffBody">
+          <tr class="loading-row"><td colspan="5">جارِ التحميل...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -312,6 +337,43 @@
   </div>
 </div>
 
+<!-- STAFF MODAL -->
+<div class="modal-overlay" id="staffModal">
+  <div class="modal-box">
+    <h3>إضافة صلاحية موظف</h3>
+    <div class="field"><label>الإيميل (لازم يكون نفس إيميل حساب الدخول اللي عملته)</label><input type="email" id="sf_email" placeholder="employee@example.com"></div>
+    <div class="field">
+      <label>الدور</label>
+      <select id="sf_role">
+        <option value="branch_staff">موظف فرع — صلاحيات محدودة</option>
+        <option value="admin">أدمن — كل الصلاحيات</option>
+      </select>
+    </div>
+    <div class="field" id="sf_branch_field">
+      <label>الفرع المسؤول عنه</label>
+      <select id="sf_branch"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('staffModal')">إلغاء</button>
+      <button class="btn-primary" id="saveStaffBtn">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATION REVIEW MODAL -->
+<div class="modal-overlay" id="appReviewModal">
+  <div class="modal-box">
+    <h3>مراجعة الطلب</h3>
+    <input type="hidden" id="ar_id">
+    <div class="field"><label>سبب الرفض (لو الحالة "مرفوض")</label><textarea id="ar_reason" placeholder="مثال: مستندات غير مكتملة"></textarea></div>
+    <div class="field"><label>ملاحظات داخلية</label><textarea id="ar_notes" placeholder="أي ملاحظات لمتابعة الطلب"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('appReviewModal')">إلغاء</button>
+      <button class="btn-primary" id="saveAppReviewBtn">حفظ</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -350,23 +412,66 @@
   const loginScreen = document.getElementById('loginScreen');
   const appShell = document.getElementById('appShell');
   const loginErr = document.getElementById('loginErr');
+  window.currentStaff = null; // { email, role, branch_name }
+
+  // يحاول يجيب صلاحية المستخدم الحالي، ولو لسه معلّقة بإيميله بس، بيربطها بحسابه أول مرة
+  async function resolveStaffProfile(user){
+    // 1) هل عنده صلاحية مربوطة فعليًا بالـ id بتاعه؟
+    let { data: byId } = await window.supabaseClient
+      .from('staff_profiles').select('*').eq('id', user.id).maybeSingle();
+    if(byId) return byId;
+
+    // 2) هل فيه صلاحية معلّقة بنفس إيميله لسه ماتربطتش؟
+    let { data: pending } = await window.supabaseClient
+      .from('staff_profiles').select('*').eq('email', user.email).is('id', null).maybeSingle();
+    if(pending){
+      const { data: claimed, error: claimErr } = await window.supabaseClient
+        .from('staff_profiles').update({ id: user.id }).eq('email', user.email).select().maybeSingle();
+      if(!claimErr && claimed) return claimed;
+    }
+    return null;
+  }
 
   async function checkSession(){
     if(!ensureClient()) return;
     const { data } = await window.supabaseClient.auth.getSession();
     if(data.session){
-      showApp(data.session.user.email);
+      await tryShowApp(data.session.user);
     }
   }
 
-  function showApp(email){
+  async function tryShowApp(user){
+    const profile = await resolveStaffProfile(user);
+    if(!profile){
+      loginErr.textContent = 'حسابك مش مربوط بأي صلاحية في لوحة التحكم. كلم الأدمن يضيفلك صلاحية بنفس الإيميل ده.';
+      loginErr.style.display = 'block';
+      if(window.supabaseClient) await window.supabaseClient.auth.signOut();
+      return;
+    }
+    window.currentStaff = profile;
+    showApp(user.email, profile);
+  }
+
+  function showApp(email, profile){
     loginScreen.style.display = 'none';
     appShell.style.display = 'block';
-    document.getElementById('userEmail').textContent = email || '';
+    const roleLabel = profile.role === 'admin' ? 'أدمن — كل الصلاحيات' : `موظف فرع — ${profile.branch_name || '--'}`;
+    document.getElementById('userEmail').textContent = `${email} (${roleLabel})`;
+
+    const isAdmin = profile.role === 'admin';
+    // إخفاء التابات اللي مش من حق موظف الفرع
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      const adminOnly = ['products','branches','content','users'].includes(btn.dataset.tab);
+      btn.style.display = (adminOnly && !isAdmin) ? 'none' : '';
+    });
+
     loadApplications();
-    loadProducts();
-    loadBranches();
-    loadContent();
+    if(isAdmin){
+      loadProducts();
+      loadBranches();
+      loadContent();
+      loadStaffList();
+    }
   }
 
   document.getElementById('loginBtn').addEventListener('click', async ()=>{
@@ -382,7 +487,7 @@
       loginErr.style.display = 'block';
       return;
     }
-    showApp(data.user.email);
+    await tryShowApp(data.user);
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async ()=>{
@@ -409,16 +514,24 @@
   async function loadApplications(){
     if(!ensureClient()) return;
     const tbody = document.getElementById('applicationsBody');
-    tbody.innerHTML = '<tr class="loading-row"><td colspan="9">جارِ التحميل...</td></tr>';
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="10">جارِ التحميل...</td></tr>';
 
-    const { data, error } = await window.supabaseClient
+    let query = window.supabaseClient
       .from('applications')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(200);
 
-    if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="9">تعذر التحميل: ${error.message}</td></tr>`; return; }
-    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="9">مفيش طلبات لسه</td></tr>'; return; }
+    // موظف الفرع بيشوف بس طلبات فرعه (RLS بتفرضها برضه، لكن الفلترة هنا
+    // بتوفر استعلام أنضف وتمنع أي لخبطة بصريًا)
+    if(window.currentStaff && window.currentStaff.role === 'branch_staff'){
+      query = query.eq('nearest_branch', window.currentStaff.branch_name);
+    }
+
+    const { data, error } = await query;
+
+    if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="10">تعذر التحميل: ${error.message}</td></tr>`; return; }
+    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="10">مفيش طلبات لسه</td></tr>'; return; }
 
     tbody.innerHTML = data.map(row => `
       <tr>
@@ -436,6 +549,11 @@
               `<option value="${s}" ${row.status === s ? 'selected' : ''}>${s}</option>`
             ).join('')}
           </select>
+        </td>
+        <td>
+          <button class="icon-btn" title="سبب الرفض / ملاحظات" onclick='openAppReview(${JSON.stringify({id:row.id, rejection_reason:row.rejection_reason||"", notes:row.notes||""}).replace(/'/g,"&apos;")})'>
+            📝 ${row.rejection_reason || row.notes ? '(مكتوب)' : ''}
+          </button>
         </td>
       </tr>
     `).join('');
@@ -673,6 +791,100 @@
         else showToast('تم الحفظ — التحديث هيظهر في الموقع فورًا');
       });
     });
+  }
+
+  // ---------------- APPLICATION REVIEW (rejection reason / notes) ----------------
+  function openAppReview(row){
+    document.getElementById('ar_id').value = row.id;
+    document.getElementById('ar_reason').value = row.rejection_reason || '';
+    document.getElementById('ar_notes').value = row.notes || '';
+    openModal('appReviewModal');
+  }
+
+  document.getElementById('saveAppReviewBtn').addEventListener('click', async ()=>{
+    if(!ensureClient()) return;
+    const id = document.getElementById('ar_id').value;
+    const payload = {
+      rejection_reason: document.getElementById('ar_reason').value.trim() || null,
+      notes: document.getElementById('ar_notes').value.trim() || null
+    };
+    const { error } = await window.supabaseClient.from('applications').update(payload).eq('id', id);
+    if(error){ showToast('تعذر الحفظ: ' + error.message); return; }
+    showToast('تم الحفظ بنجاح');
+    closeModal('appReviewModal');
+    loadApplications();
+  });
+
+  // ---------------- STAFF PERMISSIONS (admin only) ----------------
+  const ROLE_LABELS = { admin: 'أدمن — كل الصلاحيات', branch_staff: 'موظف فرع' };
+
+  async function loadStaffList(){
+    if(!ensureClient()) return;
+    const tbody = document.getElementById('staffBody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="5">جارِ التحميل...</td></tr>';
+
+    const { data, error } = await window.supabaseClient
+      .from('staff_profiles').select('*').order('created_at', { ascending: false });
+
+    if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="5">تعذر التحميل: ${error.message}</td></tr>`; return; }
+    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="5">مفيش موظفين مسجلين لسه</td></tr>'; return; }
+
+    tbody.innerHTML = data.map(s => `
+      <tr>
+        <td style="direction:ltr;text-align:right;">${s.email}</td>
+        <td>${ROLE_LABELS[s.role] || s.role}</td>
+        <td>${s.branch_name || '--'}</td>
+        <td><span class="badge ${s.id ? 'active':'inactive'}">${s.id ? 'مفعّل' : 'في انتظار أول دخول'}</span></td>
+        <td class="row-actions">
+          <button class="btn-danger" onclick="deleteStaff('${s.email}')">حذف</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadBranchOptionsForStaffModal(){
+    const sel = document.getElementById('sf_branch');
+    sel.innerHTML = '<option value="">جارِ التحميل...</option>';
+    if(!window.supabaseClient) return;
+    const { data } = await window.supabaseClient.from('branches').select('name').order('name');
+    sel.innerHTML = (data || []).map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+  }
+
+  document.getElementById('addStaffBtn').addEventListener('click', async ()=>{
+    document.getElementById('sf_email').value = '';
+    document.getElementById('sf_role').value = 'branch_staff';
+    await loadBranchOptionsForStaffModal();
+    document.getElementById('sf_branch_field').style.display = 'block';
+    openModal('staffModal');
+  });
+
+  document.getElementById('sf_role').addEventListener('change', function(){
+    document.getElementById('sf_branch_field').style.display = this.value === 'branch_staff' ? 'block' : 'none';
+  });
+
+  document.getElementById('saveStaffBtn').addEventListener('click', async ()=>{
+    if(!ensureClient()) return;
+    const email = document.getElementById('sf_email').value.trim().toLowerCase();
+    const role = document.getElementById('sf_role').value;
+    const branch_name = role === 'branch_staff' ? document.getElementById('sf_branch').value : null;
+
+    if(!email){ showToast('من فضلك اكتب إيميل الموظف'); return; }
+    if(role === 'branch_staff' && !branch_name){ showToast('من فضلك اختر الفرع'); return; }
+
+    const { error } = await window.supabaseClient
+      .from('staff_profiles').insert({ email, role, branch_name });
+    if(error){ showToast('تعذر الحفظ: ' + error.message); return; }
+    showToast('تم إضافة الصلاحية — الموظف هيتفعّل أول ما يسجل دخول بنفس الإيميل');
+    closeModal('staffModal');
+    loadStaffList();
+  });
+
+  async function deleteStaff(email){
+    if(!confirm('متأكد إنك عايز تشيل صلاحية الموظف ده؟')) return;
+    const { error } = await window.supabaseClient.from('staff_profiles').delete().eq('email', email);
+    if(error){ showToast('تعذر الحذف: ' + error.message); return; }
+    showToast('تم الحذف');
+    loadStaffList();
   }
 </script>
 </body>
