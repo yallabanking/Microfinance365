@@ -767,94 +767,8 @@
       <button class="renewal-btn" onclick="document.querySelector('.filter-chip[data-f=debt]').click(); document.getElementById('products').scrollIntoView({behavior:'smooth'})">اعرض منتجات شراء المديونية</button>
     </div>
 
-    <div class="cards-grid">
-
-      <div class="pcard reveal" data-cat="informal">
-        <span class="tag">القطاع غير الرسمي</span>
-        <span class="smart-badge fast">⚡ الأسرع صرفًا</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M8 40V20l16-13 16 13v20"/><path class="stroke" d="M19 40V26h10v14"/></svg></div>
-        <h3 data-pname="تمويل متناهي الصغر — غير رسمي">تمويل متناهي الصغر — غير رسمي</h3>
-        <p>لأصحاب الأنشطة الإنتاجية والصناعية والتجارية والخدمية وأصحاب المهن الحرة غير المسجلين رسميًا.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>5,000 حتى 200,000 ج.م</b></div>
-          <div class="f"><span>مدة التمويل</span><b>4 حتى 48 شهر</b></div>
-          <div class="f"><span>سعر العائد</span><b>42% / 35% سنويًا متناقص</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>1% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
-      <div class="pcard reveal" data-cat="informal debt">
-        <span class="tag">شراء مديونية</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M8 24h32"/><path class="stroke" d="M8 24l8-8M8 24l8 8"/><path class="stroke" d="M40 24l-8-8M40 24l-8 8"/></svg></div>
-        <h3 data-pname="شراء مديونية — غير رسمي">شراء مديونية — غير رسمي</h3>
-        <p>لنقل مديونية قرض متناهي الصغر قائم من جهة تمويل أخرى، لصاحب نشاط غير مسجل رسميًا.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>5,000 حتى 100,000 ج.م</b></div>
-          <div class="f"><span>مدة التمويل</span><b>4 حتى 48 شهر</b></div>
-          <div class="f"><span>سعر العائد</span><b>42% سنويًا متناقص</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>1% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
-      <div class="pcard reveal" data-cat="formal">
-        <span class="tag">القطاع الرسمي</span>
-        <span class="smart-badge best">👁️ الأكثر مشاهدة</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M6 18l18-11 18 11"/><path class="stroke" d="M9 18v20h30V18"/><path class="stroke" d="M20 38V28h8v10"/></svg></div>
-        <h3 data-pname="تمويل متناهي الصغر — رسمي">تمويل متناهي الصغر — رسمي</h3>
-        <p>للمنشآت الفردية والشركات المسجلة رسميًا، بمبيعات سنوية حتى مليون جنيه أو رأس مال مصدر حتى 50 ألف جنيه.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>50,000 حتى 500,000 ج.م</b></div>
-          <div class="f"><span>مدة التمويل</span><b>6 حتى 60 شهر</b></div>
-          <div class="f"><span>سعر العائد</span><b>38% / 30% سنويًا متناقص</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>2% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
-      <div class="pcard reveal" data-cat="formal debt">
-        <span class="tag">شراء مديونية</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M8 24h32"/><path class="stroke" d="M8 24l8-8M8 24l8 8"/><path class="stroke" d="M40 24l-8-8M40 24l-8 8"/></svg></div>
-        <h3 data-pname="شراء مديونية — رسمي">شراء مديونية — رسمي</h3>
-        <p>لنقل مديونية قرض قائم للمنشآت المسجلة رسميًا، مع صرف باقي الرصيد بعد تسوية المديونية القديمة.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>50,000 حتى 500,000 ج.م</b></div>
-          <div class="f"><span>مدة التمويل</span><b>6 حتى 60 شهر</b></div>
-          <div class="f"><span>سعر العائد</span><b>36% سنويًا متناقص</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>2% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
-      <div class="pcard reveal" data-cat="transport">
-        <span class="tag">وسائل النقل (705)</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M6 30V16l4-4h28l4 4v14"/><path class="stroke" d="M6 30h36"/><circle class="stroke" cx="14" cy="34" r="3"/><circle class="stroke" cx="34" cy="34" r="3"/></svg></div>
-        <h3 data-pname="تمويل وسائل النقل ومعدات البناء">تمويل وسائل النقل ومعدات البناء</h3>
-        <p>للتاكسي والأتوبيسات والتروسيكل والتوك توك والنقل الثقيل والجرارات ومعدات البناء ومراكب الصيد.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>5,000 حتى 400,000 ج.م</b></div>
-          <div class="f"><span>مدة التمويل</span><b>4 حتى 36 شهر</b></div>
-          <div class="f"><span>سعر العائد</span><b>42% سنويًا متناقص</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>1% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
-      <div class="pcard reveal" data-cat="transport debt">
-        <span class="tag">شراء مديونية نقل</span>
-        <div class="picon"><svg viewBox="0 0 48 48"><path class="stroke" d="M6 30V16l4-4h28l4 4v14"/><path class="stroke" d="M6 30h36"/><path class="stroke" d="M14 34l4 4M34 34l-4 4"/></svg></div>
-        <h3 data-pname="شراء مديونية — وسائل نقل">شراء مديونية — وسائل نقل</h3>
-        <p>لنقل مديونية قرض وسيلة نقل أو معدة بناء قائمة من جهة تمويل أخرى إلى بنك القاهرة.</p>
-        <div class="facts">
-          <div class="f"><span>الشرائح</span><b>5,000 حتى 25,000 ج.م *</b></div>
-          <div class="f"><span>مدة التمويل</span><b>4 حتى 24 شهر</b></div>
-          <div class="f"><span>ملاحظة</span><b>الشريحة حسب نوع المركبة</b></div>
-          <div class="f"><span>مصاريف الإصدار</span><b>1% من قيمة التمويل</b></div>
-        </div>
-        <button class="choose-btn" onclick="chooseProduct(this)">اختر هذا المنتج</button>
-      </div>
-
+    <div class="cards-grid" id="productsGrid">
+      <p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px;">جارِ تحميل المنتجات...</p>
     </div>
     <p style="font-size:0.75rem;color:var(--ink-soft);margin-top:16px;">* تمويل وسائل النقل (بما في ذلك التوك توك والتروسيكل والفان والسيارات) متاح الآن في جميع فروع بنك القاهرة بكل المحافظات. الشرائح والمدد تختلف حسب نوع المركبة، راجع مستشار التمويل للتفاصيل الكاملة.</p>
   </div>
@@ -1549,41 +1463,105 @@
     }
   });
 
-  // Smart cards — إضافة قائمة الأوراق المطلوبة القابلة للطي لكل منتج
-  const REQUIRED_DOCS = {
-    'تمويل متناهي الصغر — غير رسمي': ['صورة بطاقة الرقم القومي سارية', 'إثبات محل إقامة (فاتورة مرافق)', 'إثبات ممارسة النشاط (صور للمحل/الورشة)', 'صورة شخصية حديثة'],
-    'شراء مديونية — غير رسمي': ['صورة بطاقة الرقم القومي سارية', 'كشف حساب القرض القائم من الجهة الأخرى', 'إثبات محل إقامة', 'إثبات ممارسة النشاط'],
-    'تمويل متناهي الصغر — رسمي': ['صورة بطاقة الرقم القومي سارية', 'السجل التجاري / البطاقة الضريبية', 'إقرارات ضريبية أو مبيعات آخر سنة', 'إثبات محل إقامة النشاط'],
-    'شراء مديونية — رسمي': ['صورة بطاقة الرقم القومي سارية', 'السجل التجاري / البطاقة الضريبية', 'كشف حساب القرض القائم من الجهة الأخرى', 'خطاب تسوية من الجهة الدائنة'],
-    'تمويل وسائل النقل ومعدات البناء': ['صورة بطاقة الرقم القومي سارية', 'رخصة قيادة سارية (لو منطبق)', 'عرض سعر أو فاتورة المركبة/المعدة', 'إثبات محل إقامة'],
-    'شراء مديونية — وسائل نقل': ['صورة بطاقة الرقم القومي سارية', 'رخصة المركبة سارية', 'كشف حساب القرض القائم من الجهة الأخرى', 'إثبات محل إقامة'],
+  // ============================================================
+  // تحميل المنتجات ديناميكيًا من قاعدة البيانات (جدول products)
+  // بدل الكود الثابت — أي تعديل من لوحة التحكم يظهر هنا فورًا
+  // ============================================================
+
+  // بيانات احتياطية (Fallback) — تُستخدم فقط لو تعذر الاتصال بقاعدة
+  // البيانات، عشان الموقع يفضل شغال حتى بدون إنترنت أو قبل إعداد Supabase
+  const FALLBACK_PRODUCTS = [
+    {product_key:'informal-micro', category:'informal', badge_text:'الأسرع صرفًا', badge_style:'fast', tag_text:'القطاع غير الرسمي', name:'تمويل متناهي الصغر — غير رسمي', description:'لأصحاب الأنشطة الإنتاجية والصناعية والتجارية والخدمية وأصحاب المهن الحرة غير المسجلين رسميًا.', min_amount:5000, max_amount:200000, min_months:4, max_months:48, rate_text:'42% / 35% سنويًا متناقص', issuance_fee_text:'1% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','إثبات محل إقامة (فاتورة مرافق)','إثبات ممارسة النشاط (صور للمحل/الورشة)','صورة شخصية حديثة'], icon_key:'informal'},
+    {product_key:'informal-debt', category:'informal debt', badge_text:null, tag_text:'شراء مديونية', name:'شراء مديونية — غير رسمي', description:'لنقل مديونية قرض متناهي الصغر قائم من جهة تمويل أخرى، لصاحب نشاط غير مسجل رسميًا.', min_amount:5000, max_amount:100000, min_months:4, max_months:48, rate_text:'42% سنويًا متناقص', issuance_fee_text:'1% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','كشف حساب القرض القائم من الجهة الأخرى','إثبات محل إقامة','إثبات ممارسة النشاط'], icon_key:'debt'},
+    {product_key:'formal-micro', category:'formal', badge_text:'الأكثر مشاهدة', badge_style:'best', tag_text:'القطاع الرسمي', name:'تمويل متناهي الصغر — رسمي', description:'للمنشآت الفردية والشركات المسجلة رسميًا، بمبيعات سنوية حتى مليون جنيه أو رأس مال مصدر حتى 50 ألف جنيه.', min_amount:50000, max_amount:500000, min_months:6, max_months:60, rate_text:'38% / 30% سنويًا متناقص', issuance_fee_text:'2% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','السجل التجاري / البطاقة الضريبية','إقرارات ضريبية أو مبيعات آخر سنة','إثبات محل إقامة النشاط'], icon_key:'formal'},
+    {product_key:'formal-debt', category:'formal debt', badge_text:null, tag_text:'شراء مديونية', name:'شراء مديونية — رسمي', description:'لنقل مديونية قرض قائم للمنشآت المسجلة رسميًا، مع صرف باقي الرصيد بعد تسوية المديونية القديمة.', min_amount:50000, max_amount:500000, min_months:6, max_months:60, rate_text:'36% سنويًا متناقص', issuance_fee_text:'2% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','السجل التجاري / البطاقة الضريبية','كشف حساب القرض القائم من الجهة الأخرى','خطاب تسوية من الجهة الدائنة'], icon_key:'debt'},
+    {product_key:'transport', category:'transport', badge_text:null, tag_text:'وسائل النقل (705)', name:'تمويل وسائل النقل ومعدات البناء', description:'للتاكسي والأتوبيسات والتروسيكل والتوك توك والنقل الثقيل والجرارات ومعدات البناء ومراكب الصيد.', min_amount:5000, max_amount:400000, min_months:4, max_months:36, rate_text:'42% سنويًا متناقص', issuance_fee_text:'1% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','رخصة قيادة سارية (لو منطبق)','عرض سعر أو فاتورة المركبة/المعدة','إثبات محل إقامة'], icon_key:'transport'},
+    {product_key:'transport-debt', category:'transport debt', badge_text:null, tag_text:'شراء مديونية نقل', name:'شراء مديونية — وسائل نقل', description:'لنقل مديونية قرض وسيلة نقل أو معدة بناء قائمة من جهة تمويل أخرى إلى بنك القاهرة.', min_amount:5000, max_amount:25000, min_months:4, max_months:24, rate_text:'42% سنويًا متناقص', issuance_fee_text:'1% من قيمة التمويل', required_docs:['صورة بطاقة الرقم القومي سارية','رخصة المركبة سارية','كشف حساب القرض القائم من الجهة الأخرى','إثبات محل إقامة'], icon_key:'transport-debt'},
+  ];
+
+  const PRODUCT_ICONS = {
+    informal: '<svg viewBox="0 0 48 48"><path class="stroke" d="M8 40V20l16-13 16 13v20"/><path class="stroke" d="M19 40V26h10v14"/></svg>',
+    debt: '<svg viewBox="0 0 48 48"><path class="stroke" d="M8 24h32"/><path class="stroke" d="M8 24l8-8M8 24l8 8"/><path class="stroke" d="M40 24l-8-8M40 24l-8 8"/></svg>',
+    formal: '<svg viewBox="0 0 48 48"><path class="stroke" d="M6 18l18-11 18 11"/><path class="stroke" d="M9 18v20h30V18"/><path class="stroke" d="M20 38V28h8v10"/></svg>',
+    transport: '<svg viewBox="0 0 48 48"><path class="stroke" d="M6 30V16l4-4h28l4 4v14"/><path class="stroke" d="M6 30h36"/><circle class="stroke" cx="14" cy="34" r="3"/><circle class="stroke" cx="34" cy="34" r="3"/></svg>',
+    'transport-debt': '<svg viewBox="0 0 48 48"><path class="stroke" d="M6 30V16l4-4h28l4 4v14"/><path class="stroke" d="M6 30h36"/><path class="stroke" d="M14 34l4 4M34 34l-4 4"/></svg>'
   };
 
-  document.querySelectorAll('.pcard').forEach(card=>{
-    const pname = card.querySelector('h3')?.dataset.pname;
-    const docs = REQUIRED_DOCS[pname];
-    if(!docs) return;
-    const chooseBtn = card.querySelector('.choose-btn');
+  function fmtNum(n){ return Number(n).toLocaleString('en-US'); }
 
-    const toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'docs-toggle';
-    toggle.innerHTML = 'الأوراق المطلوبة <span class="chevd">▾</span>';
+  function buildProductCard(p){
+    const badgeHtml = p.badge_text
+      ? `<span class="smart-badge ${p.badge_style || 'best'}">${p.badge_style === 'fast' ? '⚡' : '👁️'} ${p.badge_text}</span>`
+      : '';
+    const icon = PRODUCT_ICONS[p.icon_key] || PRODUCT_ICONS.informal;
+    const docs = p.required_docs || [];
+    const docsHtml = docs.length ? `
+      <button type="button" class="docs-toggle">الأوراق المطلوبة <span class="chevd">▾</span></button>
+      <div class="docs-panel"><ul>${docs.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+    ` : '';
 
-    const panel = document.createElement('div');
-    panel.className = 'docs-panel';
-    const ul = document.createElement('ul');
-    docs.forEach(d=>{ const li = document.createElement('li'); li.textContent = d; ul.appendChild(li); });
-    panel.appendChild(ul);
+    const card = document.createElement('div');
+    card.className = 'pcard reveal in';
+    card.dataset.cat = p.category;
+    card.innerHTML = `
+      <span class="tag">${p.tag_text}</span>
+      ${badgeHtml}
+      <div class="picon">${icon}</div>
+      <h3 data-pname="${p.name}">${p.name}</h3>
+      <p>${p.description}</p>
+      <div class="facts">
+        <div class="f"><span>الشرائح</span><b>${fmtNum(p.min_amount)} حتى ${fmtNum(p.max_amount)} ج.م</b></div>
+        <div class="f"><span>مدة التمويل</span><b>${p.min_months} حتى ${p.max_months} شهر</b></div>
+        <div class="f"><span>سعر العائد</span><b>${p.rate_text}</b></div>
+        <div class="f"><span>مصاريف الإصدار</span><b>${p.issuance_fee_text}</b></div>
+      </div>
+      ${docsHtml}
+      <button class="choose-btn">اختر هذا المنتج</button>
+    `;
 
-    toggle.addEventListener('click', ()=>{
-      toggle.classList.toggle('open');
-      panel.classList.toggle('open');
-    });
+    card.querySelector('.choose-btn').addEventListener('click', function(){ chooseProduct(this); });
+    const toggle = card.querySelector('.docs-toggle');
+    if(toggle){
+      const panel = card.querySelector('.docs-panel');
+      toggle.addEventListener('click', ()=>{
+        toggle.classList.toggle('open');
+        panel.classList.toggle('open');
+      });
+    }
+    return card;
+  }
 
-    card.insertBefore(toggle, chooseBtn);
-    card.insertBefore(panel, chooseBtn);
-  });
+  function renderProducts(products){
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '';
+    if(!products || !products.length){
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px;">مفيش منتجات متاحة دلوقتي</p>';
+      return;
+    }
+    products.forEach(p => grid.appendChild(buildProductCard(p)));
+    attachFilterLogic();
+  }
+
+  async function loadProductsFromDB(){
+    if(window.supabaseClient){
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('products').select('*')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true });
+        if(!error && data && data.length){
+          renderProducts(data);
+          return;
+        }
+      } catch(e){ console.error('تعذر تحميل المنتجات من قاعدة البيانات:', e); }
+    }
+    // فشل الاتصال أو لسه مش جاهز — استخدم البيانات الاحتياطية
+    renderProducts(FALLBACK_PRODUCTS);
+  }
+
+  // نحاول التحميل فورًا، ونعيد المحاولة لو Supabase لسه بيتحمل
+  loadProductsFromDB();
+  window.addEventListener('load', ()=>{ setTimeout(loadProductsFromDB, 800); });
 
   // تتبع حالة الطلب برقم الطلب
   const trackBtn = document.getElementById('trackBtn');
@@ -1636,21 +1614,23 @@
     });
   }
 
-  // Product filter
-  document.querySelectorAll('.filter-chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-      chip.classList.add('active');
-      const f = chip.dataset.f;
-      document.querySelectorAll('.pcard').forEach(card=>{
-        if(f === 'all' || card.dataset.cat.includes(f)){
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+  // Product filter — يُعاد ربطه في كل مرة يتم فيها تحميل/تحديث الكروت
+  function attachFilterLogic(){
+    document.querySelectorAll('.filter-chip').forEach(chip=>{
+      chip.onclick = ()=>{
+        document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        const f = chip.dataset.f;
+        document.querySelectorAll('.pcard').forEach(card=>{
+          if(f === 'all' || card.dataset.cat.includes(f)){
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      };
     });
-  });
+  }
 
   // FAQ accordion
   document.querySelectorAll('.faq-item').forEach(item=>{
