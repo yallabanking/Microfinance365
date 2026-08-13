@@ -84,6 +84,38 @@
   .btn-danger{background:#fff;color:var(--flame);border:1.5px solid var(--flame);border-radius:8px;padding:6px 12px;font-size:0.74rem;font-weight:700;}
 
   .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+
+  /* Filter bar */
+  .filter-bar{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 18px;margin-bottom:10px;
+  }
+  .filter-field label{display:block;font-size:0.72rem;font-weight:700;color:var(--ink-soft);margin-bottom:5px;}
+  .filter-field select, .filter-field input{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;
+    font-size:0.8rem;background:#fff;font-family:'Tajawal';
+  }
+  .filter-search{grid-column:span 2;}
+  .filter-reset-field{display:flex;align-items:flex-end;}
+  .filter-reset-field button{width:100%;padding:9px;}
+  .filter-summary{font-size:0.78rem;color:var(--ink-soft);margin-bottom:14px;padding:0 4px;}
+  .filter-summary b{color:var(--flame);}
+
+  /* Reports */
+  .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .stat-cards .stat-card{
+    background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;
+  }
+  .stat-cards .stat-card b{display:block;font-family:'Cairo';font-size:1.4rem;color:var(--flame);}
+  .stat-cards .stat-card span{font-size:0.74rem;color:var(--ink-soft);}
+  .report-subtitle{font-size:0.9rem;margin-bottom:14px;color:var(--ink-soft);}
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .bar-row .bar-label{width:130px;flex:none;font-size:0.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bar-row .bar-track{flex:1;background:var(--cream);border-radius:6px;height:20px;overflow:hidden;}
+  .bar-row .bar-fill{
+    height:100%;background:linear-gradient(90deg,var(--flame),var(--ember));border-radius:6px;
+    display:flex;align-items:center;justify-content:flex-end;padding-left:8px;
+    color:#fff;font-size:0.7rem;font-weight:800;min-width:24px;transition:width .5s ease;
+  }
   table{width:100%;border-collapse:collapse;font-size:0.82rem;}
   th{background:var(--cream);text-align:right;padding:10px 12px;font-weight:800;color:var(--ink-soft);font-size:0.76rem;white-space:nowrap;}
   td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:middle;}
@@ -188,9 +220,41 @@
     .panel-head h2{text-align:center;font-size:1rem;}
     .panel-head .btn-primary, .panel-head .btn-secondary{width:100%;}
 
-    /* الجداول: خط أصغر وحشو أقل مع الحفاظ على التمرير الأفقي */
-    table{font-size:0.74rem;}
-    th, td{padding:8px 8px;}
+    .filter-bar{grid-template-columns:1fr 1fr;padding:14px;gap:10px;}
+    .filter-search{grid-column:span 2;}
+    .stat-cards{grid-template-columns:1fr 1fr;}
+    .bar-row .bar-label{width:90px;font-size:0.7rem;}
+
+    /* الجداول: تتحول لكروت متجاوبة بدون أي اسكرول أفقي */
+    .table-wrap{overflow-x:visible;}
+    table, thead, tbody, tr{display:block;width:100%;}
+    thead{display:none;}
+    table{font-size:0.8rem;}
+    tr{
+      background:var(--paper);border:1px solid var(--line);border-radius:14px;
+      margin-bottom:12px;padding:6px 0;box-shadow:0 3px 10px rgba(46,15,6,0.05);
+    }
+    tr:last-child{margin-bottom:0;}
+    tr.loading-row{padding:0;}
+    td{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:9px 14px;border-top:none;border-bottom:1px dashed var(--line);
+      text-align:left;
+    }
+    td:last-child{border-bottom:none;}
+    td[data-label]:before{
+      content:attr(data-label);font-weight:800;color:var(--ink-soft);font-size:0.72rem;
+      flex:none;white-space:nowrap;
+    }
+    tr.loading-row td{
+      display:block;text-align:center;padding:24px 14px;border:none;
+    }
+    tr.loading-row td:before{content:none;}
+    td.row-actions{flex-direction:column;align-items:stretch;gap:6px;}
+    td.row-actions:before{margin-bottom:4px;}
+    td .status-select{max-width:60%;}
+    td .icon-btn{margin-right:0;}
+
     .row-actions{flex-direction:column;gap:4px;}
     .btn-danger{width:100%;text-align:center;}
 
@@ -258,6 +322,7 @@
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="applications">طلبات العملاء</button>
+    <button class="tab-btn" data-tab="reports">التقارير</button>
     <button class="tab-btn" data-tab="products">المنتجات</button>
     <button class="tab-btn" data-tab="branches">الفروع</button>
     <button class="tab-btn" data-tab="content">محتوى الموقع</button>
@@ -270,6 +335,46 @@
       <h2>طلبات العملاء</h2>
       <button class="btn-secondary" id="refreshApplications">🔄 تحديث</button>
     </div>
+
+    <div class="filter-bar card">
+      <div class="filter-field">
+        <label>الفرع</label>
+        <select id="fltBranch"><option value="">كل الفروع</option></select>
+      </div>
+      <div class="filter-field">
+        <label>المحافظة</label>
+        <select id="fltGov"><option value="">كل المحافظات</option></select>
+      </div>
+      <div class="filter-field">
+        <label>المنتج</label>
+        <select id="fltProduct"><option value="">كل المنتجات</option></select>
+      </div>
+      <div class="filter-field">
+        <label>الحالة</label>
+        <select id="fltStatus">
+          <option value="">كل الحالات</option>
+          <option>جديد</option><option>قيد المراجعة</option><option>بيانات ناقصة</option>
+          <option>موافقة مبدئية</option><option>مرفوض</option><option>تم الصرف</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>المبلغ من</label>
+        <input type="number" id="fltMinAmount" placeholder="0">
+      </div>
+      <div class="filter-field">
+        <label>المبلغ إلى</label>
+        <input type="number" id="fltMaxAmount" placeholder="بدون حد">
+      </div>
+      <div class="filter-field filter-search">
+        <label>بحث (اسم / هاتف / رقم طلب)</label>
+        <input type="text" id="fltSearch" placeholder="اكتب للبحث...">
+      </div>
+      <div class="filter-field filter-reset-field">
+        <button class="btn-secondary" id="fltResetBtn">↺ إلغاء الفلاتر</button>
+      </div>
+    </div>
+    <div class="filter-summary" id="filterSummary"></div>
+
     <div class="card table-wrap">
       <table>
         <thead>
@@ -281,6 +386,35 @@
         </thead>
         <tbody id="applicationsBody">
           <tr class="loading-row"><td colspan="10">جارِ التحميل...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORTS PANEL -->
+  <div class="panel" id="panel-reports">
+    <div class="panel-head">
+      <h2>تقرير الأداء حسب الفرع</h2>
+      <button class="btn-secondary" id="refreshReports">🔄 تحديث</button>
+    </div>
+
+    <div class="stat-cards" id="reportStatCards"></div>
+
+    <div class="card" style="padding:18px;margin-bottom:16px;">
+      <h3 class="report-subtitle">عدد الطلبات لكل فرع</h3>
+      <div id="branchBarChart"></div>
+    </div>
+
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>الفرع</th><th>عدد الطلبات</th><th>إجمالي المبلغ المطلوب</th>
+            <th>متوسط الطلب</th><th>تم الصرف</th><th>مرفوض</th><th>معدل الصرف</th>
+          </tr>
+        </thead>
+        <tbody id="reportsBody">
+          <tr class="loading-row"><td colspan="7">جارِ التحميل...</td></tr>
         </tbody>
       </table>
     </div>
@@ -646,6 +780,7 @@
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      if(btn.dataset.tab === 'reports') loadReports();
     });
   });
 
@@ -662,7 +797,7 @@
       .from('applications')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(200);
+      .limit(500);
 
     // موظف الفرع بيشوف بس طلبات فرعه (RLS بتفرضها برضه، لكن الفلترة هنا
     // بتوفر استعلام أنضف وتمنع أي لخبطة بصريًا)
@@ -673,30 +808,85 @@
     const { data, error } = await query;
 
     if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="10">تعذر التحميل: ${error.message}</td></tr>`; return; }
-    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="10">مفيش طلبات لسه</td></tr>'; return; }
 
-    // نخزّن بيانات كل طلب كاملة عشان مودال التفاصيل يقدر يوصلها بسرعة من غير طلب تاني
+    // نخزّن كل البيانات الخام عشان الفلاتر تشتغل عليها محليًا من غير طلبات إضافية لقاعدة البيانات
+    window._allApplications = data || [];
     window._appRowsById = {};
-    data.forEach(r => { window._appRowsById[r.id] = r; });
+    (data || []).forEach(r => { window._appRowsById[r.id] = r; });
+
+    populateFilterOptions(window._allApplications);
+    renderApplicationsTable(applyApplicationFilters(window._allApplications));
+  }
+
+  // بناء خيارات الفلاتر (الفروع / المحافظات / المنتجات) من البيانات الفعلية المحملة
+  function populateFilterOptions(rows){
+    function fillSelect(id, values){
+      const sel = document.getElementById(id);
+      const current = sel.value;
+      const unique = [...new Set(values.filter(Boolean))].sort();
+      sel.innerHTML = sel.querySelector('option').outerHTML + unique.map(v => `<option value="${v}">${v}</option>`).join('');
+      if(unique.includes(current)) sel.value = current;
+    }
+    fillSelect('fltBranch', rows.map(r => r.nearest_branch));
+    fillSelect('fltGov', rows.map(r => r.governorate));
+    fillSelect('fltProduct', rows.map(r => r.chosen_product));
+  }
+
+  // تطبيق كل الفلاتر مع بعض على مصفوفة الطلبات
+  function applyApplicationFilters(rows){
+    const branch = document.getElementById('fltBranch').value;
+    const gov = document.getElementById('fltGov').value;
+    const product = document.getElementById('fltProduct').value;
+    const status = document.getElementById('fltStatus').value;
+    const minAmount = parseFloat(document.getElementById('fltMinAmount').value);
+    const maxAmount = parseFloat(document.getElementById('fltMaxAmount').value);
+    const search = document.getElementById('fltSearch').value.trim().toLowerCase();
+
+    const filtered = rows.filter(r => {
+      if(branch && r.nearest_branch !== branch) return false;
+      if(gov && r.governorate !== gov) return false;
+      if(product && r.chosen_product !== product) return false;
+      if(status && r.status !== status) return false;
+      if(!isNaN(minAmount) && Number(r.requested_amount || 0) < minAmount) return false;
+      if(!isNaN(maxAmount) && Number(r.requested_amount || 0) > maxAmount) return false;
+      if(search){
+        const hay = `${r.full_name || ''} ${r.phone || ''} ${r.request_number || ''}`.toLowerCase();
+        if(!hay.includes(search)) return false;
+      }
+      return true;
+    });
+
+    const summary = document.getElementById('filterSummary');
+    const activeFilters = [branch, gov, product, status, search].some(Boolean) || !isNaN(minAmount) || !isNaN(maxAmount);
+    summary.innerHTML = activeFilters
+      ? `عرض <b>${filtered.length}</b> من أصل <b>${rows.length}</b> طلب بعد الفلترة`
+      : `إجمالي الطلبات: <b>${rows.length}</b>`;
+
+    return filtered;
+  }
+
+  function renderApplicationsTable(data){
+    const tbody = document.getElementById('applicationsBody');
+    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="10">مفيش طلبات مطابقة</td></tr>'; return; }
 
     tbody.innerHTML = data.map(row => `
       <tr class="app-row" data-id="${row.id}" style="cursor:pointer;">
-        <td style="font-family:'Cairo';font-weight:700;direction:ltr;">${row.request_number || '--'}</td>
-        <td>${row.full_name || '--'}</td>
-        <td style="direction:ltr;">${row.phone || '--'}</td>
-        <td>${row.chosen_product || '--'}</td>
-        <td>${row.governorate || '--'}</td>
-        <td>${row.nearest_branch || '--'}</td>
-        <td>${row.requested_amount ? Number(row.requested_amount).toLocaleString('en-US') + ' ج.م' : '--'}</td>
-        <td>${row.created_at ? new Date(row.created_at).toLocaleDateString('ar-EG') : '--'}</td>
-        <td>
+        <td data-label="رقم الطلب" style="font-family:'Cairo';font-weight:700;direction:ltr;">${row.request_number || '--'}</td>
+        <td data-label="الاسم">${row.full_name || '--'}</td>
+        <td data-label="الهاتف" style="direction:ltr;">${row.phone || '--'}</td>
+        <td data-label="المنتج">${row.chosen_product || '--'}</td>
+        <td data-label="المحافظة">${row.governorate || '--'}</td>
+        <td data-label="أقرب فرع">${row.nearest_branch || '--'}</td>
+        <td data-label="المبلغ المطلوب">${row.requested_amount ? Number(row.requested_amount).toLocaleString('en-US') + ' ج.م' : '--'}</td>
+        <td data-label="التاريخ">${row.created_at ? new Date(row.created_at).toLocaleDateString('ar-EG') : '--'}</td>
+        <td data-label="الحالة">
           <select class="status-select" data-id="${row.id}">
             ${['جديد','قيد المراجعة','بيانات ناقصة','موافقة مبدئية','مرفوض','تم الصرف'].map(s =>
               `<option value="${s}" ${row.status === s ? 'selected' : ''}>${s}</option>`
             ).join('')}
           </select>
         </td>
-        <td>
+        <td data-label="سبب الرفض / ملاحظات">
           <button class="icon-btn" title="سبب الرفض / ملاحظات" onclick='event.stopPropagation(); openAppReview(${JSON.stringify({id:row.id, rejection_reason:row.rejection_reason||"", notes:row.notes||""}).replace(/'/g,"&apos;")})'>
             📝 ${row.rejection_reason || row.notes ? '(مكتوب)' : ''}
           </button>
@@ -717,12 +907,110 @@
       sel.addEventListener('change', async ()=>{
         const { error } = await window.supabaseClient
           .from('applications').update({ status: sel.value }).eq('id', sel.dataset.id);
-        if(error) showToast('تعذر تحديث الحالة: ' + error.message);
-        else showToast('تم تحديث حالة الطلب');
+        if(error){ showToast('تعذر تحديث الحالة: ' + error.message); return; }
+        showToast('تم تحديث حالة الطلب');
+        // نحدّث النسخة المخزنة محليًا برضه عشان التقارير تفضل دقيقة من غير إعادة تحميل
+        const row = window._appRowsById[sel.dataset.id];
+        if(row) row.status = sel.value;
       });
     });
   }
+
+  ['fltBranch','fltGov','fltProduct','fltStatus'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', ()=>{
+      renderApplicationsTable(applyApplicationFilters(window._allApplications || []));
+    });
+  });
+  ['fltMinAmount','fltMaxAmount','fltSearch'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{
+      renderApplicationsTable(applyApplicationFilters(window._allApplications || []));
+    });
+  });
+  document.getElementById('fltResetBtn').addEventListener('click', ()=>{
+    ['fltBranch','fltGov','fltProduct','fltStatus'].forEach(id => document.getElementById(id).value = '');
+    ['fltMinAmount','fltMaxAmount','fltSearch'].forEach(id => document.getElementById(id).value = '');
+    renderApplicationsTable(applyApplicationFilters(window._allApplications || []));
+  });
+
   document.getElementById('refreshApplications').addEventListener('click', loadApplications);
+
+  // ---------------- REPORTS (تقرير الأداء حسب الفرع) ----------------
+  async function loadReports(){
+    if(!ensureClient()) return;
+    const tbody = document.getElementById('reportsBody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="7">جارِ التحميل...</td></tr>';
+
+    // نستخدم نفس البيانات المحملة في تبويب الطلبات لو موجودة (الأدمن بيشوف كل الفروع
+    // أصلًا)، وإلا بنجيبها من جديد
+    let rows = window._allApplications;
+    if(!rows){
+      const { data, error } = await window.supabaseClient.from('applications').select('*').limit(500);
+      if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="7">تعذر التحميل: ${error.message}</td></tr>`; return; }
+      rows = data || [];
+    }
+
+    if(!rows.length){
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="7">مفيش بيانات كفاية لعرض تقرير</td></tr>';
+      document.getElementById('reportStatCards').innerHTML = '';
+      document.getElementById('branchBarChart').innerHTML = '';
+      return;
+    }
+
+    // تجميع البيانات حسب الفرع
+    const byBranch = {};
+    rows.forEach(r=>{
+      const key = r.nearest_branch || 'غير محدد';
+      if(!byBranch[key]) byBranch[key] = { count:0, total:0, disbursed:0, rejected:0 };
+      byBranch[key].count++;
+      byBranch[key].total += Number(r.requested_amount || 0);
+      if(r.status === 'تم الصرف') byBranch[key].disbursed++;
+      if(r.status === 'مرفوض') byBranch[key].rejected++;
+    });
+
+    const branches = Object.keys(byBranch).sort((a,b)=> byBranch[b].count - byBranch[a].count);
+    const maxCount = Math.max(...branches.map(b => byBranch[b].count));
+
+    // بطاقات الملخص العلوية
+    const totalApps = rows.length;
+    const totalAmount = rows.reduce((s,r)=> s + Number(r.requested_amount || 0), 0);
+    const totalDisbursed = rows.filter(r => r.status === 'تم الصرف').length;
+    const disbursementRate = totalApps ? Math.round((totalDisbursed / totalApps) * 100) : 0;
+    document.getElementById('reportStatCards').innerHTML = `
+      <div class="stat-card"><b>${totalApps}</b><span>إجمالي الطلبات</span></div>
+      <div class="stat-card"><b>${Math.round(totalAmount).toLocaleString('en-US')}</b><span>إجمالي المبلغ المطلوب (ج.م)</span></div>
+      <div class="stat-card"><b>${branches.length}</b><span>عدد الفروع النشطة</span></div>
+      <div class="stat-card"><b>${disbursementRate}%</b><span>معدل الصرف الإجمالي</span></div>
+    `;
+
+    // الرسم البياني الأفقي (Bar Chart) بعدد الطلبات لكل فرع
+    document.getElementById('branchBarChart').innerHTML = branches.map(b => {
+      const pct = maxCount ? Math.round((byBranch[b].count / maxCount) * 100) : 0;
+      return `
+        <div class="bar-row">
+          <div class="bar-label" title="${b}">${b}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;">${byBranch[b].count}</div></div>
+        </div>
+      `;
+    }).join('');
+
+    // جدول التفاصيل
+    tbody.innerHTML = branches.map(b=>{
+      const d = byBranch[b];
+      const rate = d.count ? Math.round((d.disbursed / d.count) * 100) : 0;
+      return `
+        <tr>
+          <td data-label="الفرع"><b>${b}</b></td>
+          <td data-label="عدد الطلبات">${d.count}</td>
+          <td data-label="إجمالي المبلغ المطلوب">${Math.round(d.total).toLocaleString('en-US')} ج.م</td>
+          <td data-label="متوسط الطلب">${Math.round(d.total / d.count).toLocaleString('en-US')} ج.م</td>
+          <td data-label="تم الصرف">${d.disbursed}</td>
+          <td data-label="مرفوض">${d.rejected}</td>
+          <td data-label="معدل الصرف">${rate}%</td>
+        </tr>
+      `;
+    }).join('');
+  }
+  document.getElementById('refreshReports').addEventListener('click', loadReports);
 
   // ---------------- PRODUCTS ----------------
   async function loadProducts(){
@@ -738,13 +1026,13 @@
 
     tbody.innerHTML = data.map(p => `
       <tr>
-        <td>${p.sort_order ?? 0}</td>
-        <td>${p.name}</td>
-        <td>${p.category}</td>
-        <td>${Number(p.min_amount).toLocaleString('en-US')} — ${Number(p.max_amount).toLocaleString('en-US')} ج.م</td>
-        <td>${p.rate_text}</td>
-        <td><span class="badge ${p.is_active ? 'active':'inactive'}">${p.is_active ? 'نشط':'مخفي'}</span></td>
-        <td class="row-actions">
+        <td data-label="الترتيب">${p.sort_order ?? 0}</td>
+        <td data-label="الاسم">${p.name}</td>
+        <td data-label="التصنيف">${p.category}</td>
+        <td data-label="الشريحة">${Number(p.min_amount).toLocaleString('en-US')} — ${Number(p.max_amount).toLocaleString('en-US')} ج.م</td>
+        <td data-label="سعر العائد">${p.rate_text}</td>
+        <td data-label="الحالة"><span class="badge ${p.is_active ? 'active':'inactive'}">${p.is_active ? 'نشط':'مخفي'}</span></td>
+        <td data-label="إجراءات" class="row-actions">
           <button class="icon-btn" title="تعديل" onclick='editProduct(${JSON.stringify(p).replace(/'/g,"&apos;")})'>✏️</button>
           <button class="btn-danger" onclick="deleteProduct('${p.id}')">حذف</button>
         </td>
@@ -846,12 +1134,12 @@
 
     tbody.innerHTML = data.map(b => `
       <tr>
-        <td>${b.name}</td>
-        <td>${b.governorate}</td>
-        <td>${b.city}</td>
-        <td style="direction:ltr;font-size:0.74rem;">${b.lat}, ${b.lng}</td>
-        <td><span class="badge ${b.is_active ? 'active':'inactive'}">${b.is_active ? 'نشط':'مخفي'}</span></td>
-        <td class="row-actions">
+        <td data-label="اسم الفرع">${b.name}</td>
+        <td data-label="المحافظة">${b.governorate}</td>
+        <td data-label="المدينة">${b.city}</td>
+        <td data-label="الإحداثيات" style="direction:ltr;font-size:0.74rem;">${b.lat}, ${b.lng}</td>
+        <td data-label="الحالة"><span class="badge ${b.is_active ? 'active':'inactive'}">${b.is_active ? 'نشط':'مخفي'}</span></td>
+        <td data-label="إجراءات" class="row-actions">
           <button class="icon-btn" title="تعديل" onclick='editBranch(${JSON.stringify(b).replace(/'/g,"&apos;")})'>✏️</button>
           <button class="btn-danger" onclick="deleteBranch('${b.id}')">حذف</button>
         </td>
@@ -1054,12 +1342,12 @@
 
     tbody.innerHTML = data.map(s => `
       <tr>
-        <td style="direction:ltr;text-align:right;">${s.email}</td>
-        <td><b style="color:var(--flame);">${ROLE_LABELS[s.role] || s.role}</b></td>
-        <td style="font-size:0.74rem;color:var(--ink-soft);max-width:320px;line-height:1.8;">${PERMISSION_DESCRIPTIONS[s.role] || '--'}</td>
-        <td>${s.branch_name || '--'}</td>
-        <td><span class="badge ${s.id ? 'active':'inactive'}">${s.id ? 'مفعّل' : 'في انتظار أول دخول'}</span></td>
-        <td class="row-actions">
+        <td data-label="الإيميل" style="direction:ltr;text-align:right;">${s.email}</td>
+        <td data-label="الدور"><b style="color:var(--flame);">${ROLE_LABELS[s.role] || s.role}</b></td>
+        <td data-label="الصلاحيات بالتفصيل" style="font-size:0.74rem;color:var(--ink-soft);max-width:320px;line-height:1.8;">${PERMISSION_DESCRIPTIONS[s.role] || '--'}</td>
+        <td data-label="الفرع">${s.branch_name || '--'}</td>
+        <td data-label="الحالة"><span class="badge ${s.id ? 'active':'inactive'}">${s.id ? 'مفعّل' : 'في انتظار أول دخول'}</span></td>
+        <td data-label="إجراءات" class="row-actions">
           <button class="btn-danger" onclick="deleteStaff('${s.email}')">حذف</button>
         </td>
       </tr>
