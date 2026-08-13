@@ -261,10 +261,10 @@
     <div class="card table-wrap">
       <table>
         <thead>
-          <tr><th>الإيميل</th><th>الدور</th><th>الفرع</th><th>الحالة</th><th>إجراءات</th></tr>
+          <tr><th>الإيميل</th><th>الدور</th><th>الصلاحيات بالتفصيل</th><th>الفرع</th><th>الحالة</th><th>إجراءات</th></tr>
         </thead>
         <tbody id="staffBody">
-          <tr class="loading-row"><td colspan="5">جارِ التحميل...</td></tr>
+          <tr class="loading-row"><td colspan="6">جارِ التحميل...</td></tr>
         </tbody>
       </table>
     </div>
@@ -429,6 +429,12 @@
         .from('staff_profiles').update({ id: user.id }).eq('email', user.email).select().maybeSingle();
       if(!claimErr && claimed) return claimed;
     }
+
+    // 3) مفيش صلاحيات مسجلة خالص لحد دلوقتي؟ — أول حد يسجل دخول
+    // بيتفعّل أدمن تلقائيًا (الدالة نفسها بترفض لو فيه أدمن موجود بالفعل)
+    const { data: firstAdmin, error: firstAdminErr } = await window.supabaseClient.rpc('claim_first_admin');
+    if(!firstAdminErr && firstAdmin) return firstAdmin;
+
     return null;
   }
 
@@ -816,23 +822,28 @@
   });
 
   // ---------------- STAFF PERMISSIONS (admin only) ----------------
-  const ROLE_LABELS = { admin: 'أدمن — كل الصلاحيات', branch_staff: 'موظف فرع' };
+  const ROLE_LABELS = { admin: 'أدمن', branch_staff: 'موظف فرع' };
+  const PERMISSION_DESCRIPTIONS = {
+    admin: 'عرض وتعديل كل الطلبات (كل الفروع) • إضافة/تعديل/حذف المنتجات • إضافة/تعديل/حذف الفروع • تعديل محتوى الموقع • إضافة وحذف صلاحيات الموظفين',
+    branch_staff: 'عرض طلبات فرعه بس • تحديث حالة الطلب (قيد المراجعة، موافقة، صرف...) • كتابة سبب الرفض والملاحظات • مفيش صلاحية على المنتجات أو الفروع أو باقي الموقع'
+  };
 
   async function loadStaffList(){
     if(!ensureClient()) return;
     const tbody = document.getElementById('staffBody');
-    tbody.innerHTML = '<tr class="loading-row"><td colspan="5">جارِ التحميل...</td></tr>';
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6">جارِ التحميل...</td></tr>';
 
     const { data, error } = await window.supabaseClient
       .from('staff_profiles').select('*').order('created_at', { ascending: false });
 
-    if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="5">تعذر التحميل: ${error.message}</td></tr>`; return; }
-    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="5">مفيش موظفين مسجلين لسه</td></tr>'; return; }
+    if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="6">تعذر التحميل: ${error.message}</td></tr>`; return; }
+    if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="6">مفيش موظفين مسجلين لسه</td></tr>'; return; }
 
     tbody.innerHTML = data.map(s => `
       <tr>
         <td style="direction:ltr;text-align:right;">${s.email}</td>
-        <td>${ROLE_LABELS[s.role] || s.role}</td>
+        <td><b style="color:var(--flame);">${ROLE_LABELS[s.role] || s.role}</b></td>
+        <td style="font-size:0.74rem;color:var(--ink-soft);max-width:320px;line-height:1.8;">${PERMISSION_DESCRIPTIONS[s.role] || '--'}</td>
         <td>${s.branch_name || '--'}</td>
         <td><span class="badge ${s.id ? 'active':'inactive'}">${s.id ? 'مفعّل' : 'في انتظار أول دخول'}</span></td>
         <td class="row-actions">
