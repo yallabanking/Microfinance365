@@ -443,7 +443,22 @@
   .welcome-stats b{display:block;font-family:'Cairo';font-weight:900;color:var(--flame);font-size:1rem;}
   .welcome-stats span{font-size:0.66rem;color:var(--ink-soft);font-weight:600;}
   .welcome-cta{box-shadow:0 14px 30px -10px rgba(217,51,10,0.55);}
+  .welcome-track-btn{
+    width:100%;background:transparent;color:var(--flame);border:1.5px solid rgba(217,51,10,0.3);
+    border-radius:12px;padding:12px;font-family:'Cairo';font-weight:800;font-size:0.86rem;
+    margin-top:10px;cursor:pointer;
+  }
+  .welcome-track-btn:hover{background:var(--cream);}
   .welcome-skip{margin-top:14px;font-size:0.8rem;color:var(--ink-soft);font-weight:700;cursor:pointer;text-decoration:underline;}
+
+  .success-req-box{
+    background:linear-gradient(120deg,#FFF0E2,#FFE3C4);border:1px solid rgba(217,51,10,0.25);
+    border-radius:14px;padding:16px;margin:18px 0;
+  }
+  .success-req-num{
+    font-family:'Cairo';font-weight:900;font-size:1.4rem;color:var(--flame);
+    letter-spacing:1px;direction:ltr;
+  }
 
   /* Auto-detected national ID info */
   .id-auto-info{display:flex;gap:8px;margin-top:8px;animation:cardIn .35s ease;}
@@ -534,7 +549,24 @@
       <div><b>الأقوى</b><span>بلا منافس</span></div>
     </div>
     <button class="btn-primary welcome-cta" id="welcomeStartBtn">ابدأ طلبك دلوقتي</button>
+    <button class="welcome-track-btn" id="welcomeTrackBtn">🔍 تتبع طلبك الحالي</button>
     <div class="welcome-skip" id="welcomeSkipBtn">تصفح الموقع أولاً</div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="welcome-overlay" id="successOverlay" style="display:none;">
+  <div class="welcome-card">
+    <div style="font-size:2.6rem;margin-bottom:8px;">✅</div>
+    <h2 class="welcome-title" style="font-size:1.3rem;">تم التقديم بنجاح</h2>
+    <p class="welcome-sub">احتفظ برقم الطلب ده، هيتواصل معاك مستشار التمويل بيه قريبًا.</p>
+    <div class="success-req-box">
+      <div class="hint" style="margin-bottom:4px;">رقم الطلب</div>
+      <div class="success-req-num" id="successReqNumber">--</div>
+    </div>
+    <button class="btn-primary welcome-cta" id="successCopyBtn">📋 نسخ رقم الطلب</button>
+    <button class="welcome-track-btn" id="successTrackBtn">🔍 تتبع الطلب دلوقتي</button>
+    <div class="welcome-skip" id="successCloseBtn">إغلاق</div>
   </div>
 </div>
 
@@ -727,17 +759,6 @@
 
         <button class="btn-primary" id="btnSubmitForm" style="margin-top:6px;">إرسال بيانات الطلب</button>
         <div class="hint" style="text-align:center;margin-top:8px;">بياناتك بتتشفّر وبتتراجع من مستشار التمويل قبل أي إجراء.</div>
-      </div>
-
-      <div class="gate-panel" id="panel5" style="display:none;text-align:center;padding:10px 4px;">
-        <div style="font-size:2.4rem;margin-bottom:6px;">✅</div>
-        <div style="font-weight:800;font-size:1.05rem;margin-bottom:6px;">تم استلام طلبك بنجاح</div>
-        <div class="hint" style="margin-bottom:16px;">احتفظ برقم الطلب ده، هيتواصل معاك مستشار التمويل بيه قريبًا.</div>
-        <div class="offer-card" style="margin-bottom:14px;">
-          <div class="hint" style="margin-bottom:4px;">رقم الطلب</div>
-          <div class="amt" id="requestNumber" style="letter-spacing:1px;direction:ltr;">--</div>
-        </div>
-        <button class="btn-ghost" id="copyReqBtn" onclick="copyRequestNumber()">نسخ رقم الطلب</button>
       </div>
     </div>
   </div>
@@ -941,6 +962,10 @@
     document.getElementById('apply').scrollIntoView({behavior:'smooth'});
   });
   document.getElementById('welcomeSkipBtn').addEventListener('click', closeWelcome);
+  document.getElementById('welcomeTrackBtn').addEventListener('click', ()=>{
+    closeWelcome();
+    document.getElementById('track').scrollIntoView({behavior:'smooth'});
+  });
 
   // Reveal on scroll (with stagger for grouped grid/list items)
   const revealEls = document.querySelectorAll('.reveal');
@@ -1236,7 +1261,6 @@
   // Choose product -> open step 4 form
   const gs4 = document.getElementById('gs4');
   const panel4 = document.getElementById('panel4');
-  const panel5 = document.getElementById('panel5');
   const chosenProduct = document.getElementById('chosenProduct');
 
   function chooseProduct(btn){
@@ -1369,15 +1393,37 @@
     return `MFN-${y}${m}${d}-${rand}`;
   }
 
-  function copyRequestNumber(){
-    const txt = document.getElementById('requestNumber').textContent;
+  // ---------------- نافذة التقديم بنجاح ----------------
+  const successOverlay = document.getElementById('successOverlay');
+  const successReqNumber = document.getElementById('successReqNumber');
+
+  function openSuccessModal(requestNumber){
+    successReqNumber.textContent = requestNumber;
+    successOverlay.style.display = 'flex';
+  }
+  function closeSuccessModal(){ successOverlay.style.display = 'none'; }
+
+  document.getElementById('successCloseBtn').addEventListener('click', closeSuccessModal);
+
+  document.getElementById('successCopyBtn').addEventListener('click', ()=>{
+    const txt = successReqNumber.textContent;
     navigator.clipboard.writeText(txt).then(()=>{
-      const btn = document.getElementById('copyReqBtn');
+      const btn = document.getElementById('successCopyBtn');
       const old = btn.textContent;
       btn.textContent = 'تم النسخ ✓';
       setTimeout(()=>{ btn.textContent = old; }, 1800);
-    }).catch(()=>{});
-  }
+    }).catch(()=>{ showToast('تعذر نسخ الرقم، انسخه يدويًا'); });
+  });
+
+  document.getElementById('successTrackBtn').addEventListener('click', ()=>{
+    const num = successReqNumber.textContent;
+    closeSuccessModal();
+    const trackInputEl = document.getElementById('trackInput');
+    if(trackInputEl) trackInputEl.value = num;
+    document.getElementById('track').scrollIntoView({behavior:'smooth'});
+    const btn = document.getElementById('trackBtn');
+    if(btn) btn.click();
+  });
 
   submitBtn.addEventListener('click', async ()=>{
     const fullName = document.getElementById('fullName').value.trim();
@@ -1469,9 +1515,10 @@
       });
       if (insErr) throw insErr;
 
-      document.getElementById('requestNumber').textContent = requestNumber;
-      panel4.style.display = 'none';
-      panel5.style.display = 'block';
+      openSuccessModal(requestNumber);
+      // نرجّع الفورم لحالته الابتدائية جاهز لطلب جديد لو احتاج العميل
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال بيانات الطلب';
     } catch (err) {
       console.error(err);
       showToast('حصل خطأ أثناء الإرسال، برجاء المحاولة مرة أخرى. (' + (err.message || 'خطأ غير معروف') + ')');

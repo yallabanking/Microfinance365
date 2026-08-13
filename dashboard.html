@@ -41,7 +41,6 @@
     font-weight:800;font-size:0.92rem;font-family:'Cairo';
   }
   .login-err{color:var(--flame);font-size:0.8rem;margin-top:10px;display:none;font-weight:700;}
-  .login-hint{font-size:0.72rem;color:var(--ink-soft);margin-top:16px;line-height:1.7;}
   .dev-credit{font-size:0.68rem;color:var(--ink-soft);opacity:0.65;margin-top:10px;font-family:'Cairo';letter-spacing:0.3px;}
 
   /* SHELL */
@@ -161,6 +160,70 @@
     .field-row{grid-template-columns:1fr;}
     .panel{padding:14px;}
   }
+
+  /* ============================================================ */
+  /* MOBILE RESPONSIVE — تناسق كامل مع شاشات الموبايل */
+  /* ============================================================ */
+  @media(max-width:640px){
+    body{font-size:13px;}
+
+    header{
+      flex-direction:column;align-items:stretch;gap:10px;padding:12px 14px;
+    }
+    header .brand{justify-content:center;}
+    header .brand span{font-size:0.85rem;}
+    header .userbox{
+      justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:0.72rem;
+    }
+    header .userbox span{
+      flex:1 1 100%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    header .logout-btn{flex:1;padding:8px 10px;font-size:0.72rem;}
+
+    .tabs{padding:0 8px;}
+    .tab-btn{padding:12px 12px;font-size:0.78rem;}
+
+    .panel{padding:10px;}
+    .panel-head{flex-direction:column;align-items:stretch;}
+    .panel-head h2{text-align:center;font-size:1rem;}
+    .panel-head .btn-primary, .panel-head .btn-secondary{width:100%;}
+
+    /* الجداول: خط أصغر وحشو أقل مع الحفاظ على التمرير الأفقي */
+    table{font-size:0.74rem;}
+    th, td{padding:8px 8px;}
+    .row-actions{flex-direction:column;gap:4px;}
+    .btn-danger{width:100%;text-align:center;}
+
+    /* المودالز: تمتلئ الشاشة تقريبًا مع حواف مريحة */
+    .modal-overlay{padding:10px;align-items:flex-end;}
+    .modal-box{
+      max-width:100%;width:100%;border-radius:18px 18px 0 0;
+      max-height:92vh;padding:18px 16px;
+    }
+    .modal-box h3{font-size:0.95rem;}
+    .modal-actions{flex-direction:column;}
+    .modal-actions button{width:100%;}
+
+    .detail-grid{grid-template-columns:1fr;gap:8px;}
+    .detail-docs{grid-template-columns:1fr 1fr;gap:8px;}
+    .detail-docs img{max-height:120px;}
+
+    .login-card{padding:26px 20px;border-radius:18px;}
+    .login-card h1{font-size:1.05rem;}
+
+    .content-item{padding:12px 14px;}
+
+    .toast{
+      left:10px;right:10px;transform:translateX(0) translateY(20px);
+      max-width:none;text-align:center;
+    }
+    .toast.show{transform:translateX(0) translateY(0);}
+  }
+
+  @media(max-width:380px){
+    .tab-btn{padding:10px 8px;font-size:0.72rem;}
+    header .brand span{font-size:0.78rem;}
+  }
 </style>
 </head>
 <body>
@@ -176,9 +239,6 @@
     <button id="loginBtn">تسجيل الدخول</button>
     <div class="dev-credit">Developed by Mohamed AbdElHadi.</div>
     <div class="login-err" id="loginErr"></div>
-    <div class="login-hint">
-     لو لسا معملتش حساب اتواصل مع الادمن
-    </div>
   </div>
 </div>
 
