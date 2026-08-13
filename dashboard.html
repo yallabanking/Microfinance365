@@ -42,6 +42,7 @@
   }
   .login-err{color:var(--flame);font-size:0.8rem;margin-top:10px;display:none;font-weight:700;}
   .login-hint{font-size:0.72rem;color:var(--ink-soft);margin-top:16px;line-height:1.7;}
+  .dev-credit{font-size:0.68rem;color:var(--ink-soft);opacity:0.65;margin-top:10px;font-family:'Cairo';letter-spacing:0.3px;}
 
   /* SHELL */
   #appShell{display:none;min-height:100vh;}
@@ -128,6 +129,27 @@
   .content-item .save-row{display:flex;justify-content:flex-end;margin-top:8px;}
   .content-item .save-row button{padding:6px 16px;font-size:0.75rem;}
 
+  /* Application detail modal */
+  .detail-section{margin-bottom:18px;}
+  .detail-section h4{
+    font-size:0.85rem;color:var(--flame);font-family:'Cairo';margin-bottom:10px;
+    border-bottom:1px solid var(--line);padding-bottom:6px;
+  }
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;}
+  .detail-item{font-size:0.82rem;}
+  .detail-item span{display:block;color:var(--ink-soft);font-size:0.72rem;margin-bottom:2px;}
+  .detail-item b{color:var(--ink);}
+  .detail-docs{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .detail-docs .doc-box{text-align:center;}
+  .detail-docs .doc-box span{display:block;font-size:0.74rem;color:var(--ink-soft);margin-bottom:6px;}
+  .detail-docs img{
+    width:100%;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;
+    max-height:160px;object-fit:cover;
+  }
+  .detail-docs .doc-loading{
+    background:var(--cream);border-radius:10px;padding:30px 10px;color:var(--ink-soft);font-size:0.76rem;
+  }
+
   .toast{
     position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:#FFE7C2;padding:12px 22px;border-radius:10px;font-size:0.82rem;
@@ -152,9 +174,10 @@
     <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
     <input type="password" id="loginPassword" placeholder="كلمة المرور">
     <button id="loginBtn">تسجيل الدخول</button>
+    <div class="dev-credit">Developed by Mohamed AbdElHadi.</div>
     <div class="login-err" id="loginErr"></div>
     <div class="login-hint">
-     Developed by Mohamed AbdElHadi.
+     لو لسا معملتش حساب اتواصل مع الادمن
     </div>
   </div>
 </div>
@@ -168,6 +191,7 @@
     </div>
     <div class="userbox">
       <span id="userEmail"></span>
+      <button class="logout-btn" id="changePasswordBtn" style="border-color:rgba(255,255,255,0.35);">🔑 كلمة المرور</button>
       <button class="logout-btn" id="logoutBtn">تسجيل الخروج</button>
     </div>
   </header>
@@ -374,6 +398,30 @@
   </div>
 </div>
 
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal-box">
+    <h3>تغيير كلمة المرور</h3>
+    <div class="field"><label>كلمة المرور الجديدة</label><input type="password" id="newPassword1" placeholder="6 أحرف على الأقل"></div>
+    <div class="field"><label>تأكيد كلمة المرور الجديدة</label><input type="password" id="newPassword2" placeholder="اكتبها تاني للتأكيد"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('changePasswordModal')">إلغاء</button>
+      <button class="btn-primary" id="savePasswordBtn">حفظ كلمة المرور</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATION DETAIL MODAL -->
+<div class="modal-overlay" id="appDetailModal">
+  <div class="modal-box" style="max-width:640px;">
+    <h3>بيانات الطلب كاملة</h3>
+    <div id="appDetailBody">جارِ التحميل...</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('appDetailModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -416,17 +464,20 @@
 
   // يحاول يجيب صلاحية المستخدم الحالي، ولو لسه معلّقة بإيميله بس، بيربطها بحسابه أول مرة
   async function resolveStaffProfile(user){
+    const userEmail = (user.email || '').toLowerCase();
+
     // 1) هل عنده صلاحية مربوطة فعليًا بالـ id بتاعه؟
     let { data: byId } = await window.supabaseClient
       .from('staff_profiles').select('*').eq('id', user.id).maybeSingle();
     if(byId) return { profile: byId, debug: null };
 
     // 2) هل فيه صلاحية معلّقة بنفس إيميله لسه ماتربطتش؟
+    // (بنقارن بحروف صغيرة عشان فرق الكابيتال/سمول مايبوظش المطابقة)
     let { data: pending } = await window.supabaseClient
-      .from('staff_profiles').select('*').eq('email', user.email).is('id', null).maybeSingle();
+      .from('staff_profiles').select('*').eq('email', userEmail).is('id', null).maybeSingle();
     if(pending){
       const { data: claimed, error: claimErr } = await window.supabaseClient
-        .from('staff_profiles').update({ id: user.id }).eq('email', user.email).select().maybeSingle();
+        .from('staff_profiles').update({ id: user.id }).eq('email', userEmail).select().maybeSingle();
       if(!claimErr && claimed) return { profile: claimed, debug: null };
       if(claimErr) return { profile: null, debug: 'تعذر ربط الصلاحية المعلّقة: ' + claimErr.message };
     }
@@ -504,6 +555,28 @@
     location.reload();
   });
 
+  // ---------------- CHANGE PASSWORD (متاحة لأي مستخدم، أدمن أو موظف فرع) ----------------
+  document.getElementById('changePasswordBtn').addEventListener('click', ()=>{
+    document.getElementById('newPassword1').value = '';
+    document.getElementById('newPassword2').value = '';
+    openModal('changePasswordModal');
+  });
+
+  document.getElementById('savePasswordBtn').addEventListener('click', async ()=>{
+    if(!ensureClient()) return;
+    const p1 = document.getElementById('newPassword1').value;
+    const p2 = document.getElementById('newPassword2').value;
+
+    if(!p1 || p1.length < 6){ showToast('كلمة المرور لازم تكون 6 أحرف على الأقل'); return; }
+    if(p1 !== p2){ showToast('كلمتا المرور مش متطابقتين'); return; }
+
+    const { error } = await window.supabaseClient.auth.updateUser({ password: p1 });
+    if(error){ showToast('تعذر تغيير كلمة المرور: ' + error.message); return; }
+
+    showToast('تم تغيير كلمة المرور بنجاح');
+    closeModal('changePasswordModal');
+  });
+
   setTimeout(checkSession, 400);
 
   // ---------------- TABS ----------------
@@ -542,8 +615,12 @@
     if(error){ tbody.innerHTML = `<tr class="loading-row"><td colspan="10">تعذر التحميل: ${error.message}</td></tr>`; return; }
     if(!data || !data.length){ tbody.innerHTML = '<tr class="loading-row"><td colspan="10">مفيش طلبات لسه</td></tr>'; return; }
 
+    // نخزّن بيانات كل طلب كاملة عشان مودال التفاصيل يقدر يوصلها بسرعة من غير طلب تاني
+    window._appRowsById = {};
+    data.forEach(r => { window._appRowsById[r.id] = r; });
+
     tbody.innerHTML = data.map(row => `
-      <tr>
+      <tr class="app-row" data-id="${row.id}" style="cursor:pointer;">
         <td style="font-family:'Cairo';font-weight:700;direction:ltr;">${row.request_number || '--'}</td>
         <td>${row.full_name || '--'}</td>
         <td style="direction:ltr;">${row.phone || '--'}</td>
@@ -560,14 +637,23 @@
           </select>
         </td>
         <td>
-          <button class="icon-btn" title="سبب الرفض / ملاحظات" onclick='openAppReview(${JSON.stringify({id:row.id, rejection_reason:row.rejection_reason||"", notes:row.notes||""}).replace(/'/g,"&apos;")})'>
+          <button class="icon-btn" title="سبب الرفض / ملاحظات" onclick='event.stopPropagation(); openAppReview(${JSON.stringify({id:row.id, rejection_reason:row.rejection_reason||"", notes:row.notes||""}).replace(/'/g,"&apos;")})'>
             📝 ${row.rejection_reason || row.notes ? '(مكتوب)' : ''}
           </button>
         </td>
       </tr>
     `).join('');
 
+    // الضغط على أي مكان في الصف (غير القوائم والزراير) بيفتح تفاصيل العميل كاملة
+    tbody.querySelectorAll('.app-row').forEach(tr=>{
+      tr.addEventListener('click', (e)=>{
+        if(e.target.closest('select') || e.target.closest('button')) return;
+        openApplicationDetail(tr.dataset.id);
+      });
+    });
+
     tbody.querySelectorAll('.status-select').forEach(sel=>{
+      sel.addEventListener('click', e => e.stopPropagation());
       sel.addEventListener('change', async ()=>{
         const { error } = await window.supabaseClient
           .from('applications').update({ status: sel.value }).eq('id', sel.dataset.id);
@@ -800,6 +886,70 @@
         else showToast('تم الحفظ — التحديث هيظهر في الموقع فورًا');
       });
     });
+  }
+
+  // ---------------- APPLICATION FULL DETAIL (بيانات العميل + الصور) ----------------
+  const DETAIL_LABELS = {
+    request_number: 'رقم الطلب', full_name: 'الاسم رباعي', national_id: 'الرقم القومي',
+    gender: 'النوع', birth_date: 'تاريخ الميلاد', education_level: 'المؤهل الدراسي',
+    job_title: 'الوظيفة / النشاط', phone: 'رقم الهاتف', chosen_product: 'المنتج المختار',
+    requested_amount: 'المبلغ المطلوب', requested_installment: 'القسط الشهري المقترح',
+    governorate: 'المحافظة', city: 'المدينة', locality: 'القرية / الحي',
+    nearest_branch: 'أقرب فرع', branch_distance_km: 'المسافة للفرع', status: 'الحالة',
+    created_at: 'تاريخ التقديم'
+  };
+
+  function fmtDetailValue(key, value){
+    if(value === null || value === undefined || value === '') return '--';
+    if(key === 'requested_amount' || key === 'requested_installment') return Number(value).toLocaleString('en-US') + ' ج.م';
+    if(key === 'branch_distance_km') return Number(value).toFixed(1) + ' كم';
+    if(key === 'created_at') return new Date(value).toLocaleString('ar-EG');
+    return value;
+  }
+
+  async function openApplicationDetail(id){
+    const row = window._appRowsById ? window._appRowsById[id] : null;
+    if(!row){ showToast('تعذر إيجاد بيانات الطلب'); return; }
+
+    const body = document.getElementById('appDetailBody');
+    const fieldsHtml = Object.keys(DETAIL_LABELS).map(key => `
+      <div class="detail-item">
+        <span>${DETAIL_LABELS[key]}</span>
+        <b>${fmtDetailValue(key, row[key])}</b>
+      </div>
+    `).join('');
+
+    body.innerHTML = `
+      <div class="detail-section">
+        <h4>بيانات الطلب</h4>
+        <div class="detail-grid">${fieldsHtml}</div>
+      </div>
+      <div class="detail-section">
+        <h4>صورة البطاقة الشخصية</h4>
+        <div class="detail-docs" id="detailDocsBox">
+          <div class="doc-box"><span>الوجه</span><div class="doc-loading" id="docFrontBox">جارِ تحميل الصورة...</div></div>
+          <div class="doc-box"><span>الظهر</span><div class="doc-loading" id="docBackBox">جارِ تحميل الصورة...</div></div>
+        </div>
+      </div>
+    `;
+    openModal('appDetailModal');
+
+    // الصور متخزنة في باكت خاص (id-cards)، فمحتاجين رابط موقّت مؤقت (Signed URL)
+    // بدل الرابط العام، لأن الباكت مش عام لأي حد
+    async function loadDocImage(path, boxId){
+      const box = document.getElementById(boxId);
+      if(!path){ box.textContent = 'مفيش صورة مرفوعة'; return; }
+      try {
+        const { data, error } = await window.supabaseClient
+          .storage.from('id-cards').createSignedUrl(path, 300); // صالح 5 دقايق بس
+        if(error || !data?.signedUrl){ box.textContent = 'تعذر تحميل الصورة'; return; }
+        box.outerHTML = `<img src="${data.signedUrl}" onclick="window.open('${data.signedUrl}','_blank')" alt="صورة البطاقة">`;
+      } catch(e){
+        box.textContent = 'تعذر تحميل الصورة';
+      }
+    }
+    loadDocImage(row.id_front_path, 'docFrontBox');
+    loadDocImage(row.id_back_path, 'docBackBox');
   }
 
   // ---------------- APPLICATION REVIEW (rejection reason / notes) ----------------
