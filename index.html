@@ -1486,10 +1486,36 @@
       const frontPath = `applications/${stamp}_front.${safeExt(frontFile)}`;
       const backPath = `applications/${stamp}_back.${safeExt(backFile)}`;
 
-      const { error: upErr1 } = await window.supabaseClient.storage.from('id-cards').upload(frontPath, frontFile);
-      if (upErr1) throw upErr1;
-      const { error: upErr2 } = await window.supabaseClient.storage.from('id-cards').upload(backPath, backFile);
-      if (upErr2) throw upErr2;
+      // نحول الملف لـ base64 عشان نبعته للـ Edge Function
+      function fileToBase64(file){
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // بيرفع الصورة عن طريق Edge Function (upload-id-cards) بدل الرفع المباشر
+      // للـ Storage، عشان نتخطى مشكلة RLS المؤقتة مع الـ anon/publishable key
+      async function uploadViaEdgeFunction(path, file){
+        const base64 = await fileToBase64(file);
+        const res = await fetch(`${window.SUPABASE_URL}/functions/v1/upload-id-cards`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': window.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${window.SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({ path, fileBase64: base64, contentType: file.type || 'image/jpeg' })
+        });
+        const json = await res.json();
+        if(!res.ok || json.error) throw new Error(json.error || 'فشل رفع الصورة');
+        return json;
+      }
+
+      await uploadViaEdgeFunction(frontPath, frontFile);
+      await uploadViaEdgeFunction(backPath, backFile);
 
       const { error: insErr } = await window.supabaseClient.from('applications').insert({
         request_number: requestNumber,
