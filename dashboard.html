@@ -145,6 +145,15 @@
   .field input, .field select, .field textarea{
     width:100%;border:1.5px solid var(--line);border-radius:9px;padding:10px;font-size:0.86rem;background:#fff;
   }
+  .branch-checklist{
+    max-height:220px;overflow-y:auto;border:1.5px solid var(--line);border-radius:9px;padding:6px;background:#fff;
+  }
+  .branch-checklist label{
+    display:flex;align-items:center;gap:8px;padding:8px 6px;font-size:0.84rem;font-weight:400;
+    color:var(--ink);cursor:pointer;border-bottom:1px solid var(--cream);margin-bottom:0;
+  }
+  .branch-checklist label:last-child{border-bottom:none;}
+  .branch-checklist input[type=checkbox]{width:auto;accent-color:var(--flame);}
   .field textarea{min-height:70px;resize:vertical;}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .modal-actions{display:flex;gap:10px;margin-top:18px;}
@@ -568,8 +577,8 @@
       </select>
     </div>
     <div class="field" id="sf_branch_field">
-      <label>الفرع المسؤول عنه</label>
-      <select id="sf_branch"></select>
+      <label>الفروع المسؤول عنها (تقدر تختار أكتر من فرع)</label>
+      <div id="sf_branch_list" class="branch-checklist"></div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('staffModal')">إلغاء</button>
@@ -709,7 +718,8 @@
   function showApp(email, profile){
     loginScreen.style.display = 'none';
     appShell.style.display = 'block';
-    const roleLabel = profile.role === 'admin' ? 'أدمن — كل الصلاحيات' : `موظف فرع — ${profile.branch_name || '--'}`;
+    const branchList = (profile.branch_names || []).join('، ');
+    const roleLabel = profile.role === 'admin' ? 'أدمن — كل الصلاحيات' : `موظف فرع — ${branchList || '--'}`;
     document.getElementById('userEmail').textContent = `${email} (${roleLabel})`;
 
     const isAdmin = profile.role === 'admin';
@@ -802,7 +812,7 @@
     // موظف الفرع بيشوف بس طلبات فرعه (RLS بتفرضها برضه، لكن الفلترة هنا
     // بتوفر استعلام أنضف وتمنع أي لخبطة بصريًا)
     if(window.currentStaff && window.currentStaff.role === 'branch_staff'){
-      query = query.eq('nearest_branch', window.currentStaff.branch_name);
+      query = query.in('nearest_branch', window.currentStaff.branch_names || []);
     }
 
     const { data, error } = await query;
@@ -1326,7 +1336,7 @@
   const ROLE_LABELS = { admin: 'أدمن', branch_staff: 'موظف فرع' };
   const PERMISSION_DESCRIPTIONS = {
     admin: 'عرض وتعديل كل الطلبات (كل الفروع) • إضافة/تعديل/حذف المنتجات • إضافة/تعديل/حذف الفروع • تعديل محتوى الموقع • إضافة وحذف صلاحيات الموظفين',
-    branch_staff: 'عرض طلبات فرعه بس • تحديث حالة الطلب (قيد المراجعة، موافقة، صرف...) • كتابة سبب الرفض والملاحظات • مفيش صلاحية على المنتجات أو الفروع أو باقي الموقع'
+    branch_staff: 'عرض طلبات فروعه المحددة بس • تحديث حالة الطلب (قيد المراجعة، موافقة، صرف...) • كتابة سبب الرفض والملاحظات • مفيش صلاحية على المنتجات أو الفروع أو باقي الموقع'
   };
 
   async function loadStaffList(){
@@ -1345,7 +1355,7 @@
         <td data-label="الإيميل" style="direction:ltr;text-align:right;">${s.email}</td>
         <td data-label="الدور"><b style="color:var(--flame);">${ROLE_LABELS[s.role] || s.role}</b></td>
         <td data-label="الصلاحيات بالتفصيل" style="font-size:0.74rem;color:var(--ink-soft);max-width:320px;line-height:1.8;">${PERMISSION_DESCRIPTIONS[s.role] || '--'}</td>
-        <td data-label="الفرع">${s.branch_name || '--'}</td>
+        <td data-label="الفروع">${(s.branch_names || []).join('، ') || '--'}</td>
         <td data-label="الحالة"><span class="badge ${s.id ? 'active':'inactive'}">${s.id ? 'مفعّل' : 'في انتظار أول دخول'}</span></td>
         <td data-label="إجراءات" class="row-actions">
           <button class="btn-danger" onclick="deleteStaff('${s.email}')">حذف</button>
@@ -1355,11 +1365,13 @@
   }
 
   async function loadBranchOptionsForStaffModal(){
-    const sel = document.getElementById('sf_branch');
-    sel.innerHTML = '<option value="">جارِ التحميل...</option>';
+    const box = document.getElementById('sf_branch_list');
+    box.innerHTML = 'جارِ التحميل...';
     if(!window.supabaseClient) return;
     const { data } = await window.supabaseClient.from('branches').select('name').order('name');
-    sel.innerHTML = (data || []).map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+    box.innerHTML = (data || []).map(b => `
+      <label><input type="checkbox" value="${b.name}"> ${b.name}</label>
+    `).join('');
   }
 
   document.getElementById('addStaffBtn').addEventListener('click', async ()=>{
@@ -1378,13 +1390,14 @@
     if(!ensureClient()) return;
     const email = document.getElementById('sf_email').value.trim().toLowerCase();
     const role = document.getElementById('sf_role').value;
-    const branch_name = role === 'branch_staff' ? document.getElementById('sf_branch').value : null;
+    const checkedBoxes = [...document.querySelectorAll('#sf_branch_list input[type=checkbox]:checked')];
+    const branch_names = role === 'branch_staff' ? checkedBoxes.map(cb => cb.value) : null;
 
     if(!email){ showToast('من فضلك اكتب إيميل الموظف'); return; }
-    if(role === 'branch_staff' && !branch_name){ showToast('من فضلك اختر الفرع'); return; }
+    if(role === 'branch_staff' && (!branch_names || !branch_names.length)){ showToast('من فضلك اختر فرع واحد على الأقل'); return; }
 
     const { error } = await window.supabaseClient
-      .from('staff_profiles').insert({ email, role, branch_name });
+      .from('staff_profiles').insert({ email, role, branch_names });
     if(error){ showToast('تعذر الحفظ: ' + error.message); return; }
     showToast('تم إضافة الصلاحية — الموظف هيتفعّل أول ما يسجل دخول بنفس الإيميل');
     closeModal('staffModal');
